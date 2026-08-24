@@ -18,11 +18,14 @@
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="brand-copy">
           <strong>GATDUELL</strong>
-          <small>UMEÅ STREET CHALLENGE</small>
+          <small>SWEDEN STREET CHALLENGE</small>
         </span>
       </a>
       <div class="top-actions">
-        <span class="city-chip"><i></i> Umeå</span>
+        <span id="cityChip" class="city-chip"><i></i> <span id="cityChipName">Umeå</span></span>
+        <button id="cityCatalogBtn" class="ghost nav-ghost" type="button">Städer</button>
+        <button id="rankingBtn" class="ghost nav-ghost" type="button">Ranking</button>
+        <button id="accountBtn" class="ghost nav-ghost" type="button">Konto</button>
         <button id="newGameBtn" class="ghost" type="button">Ny match</button>
       </div>
     </header>
@@ -31,8 +34,8 @@
       <section id="landing" class="hero-panel" aria-label="Introduktion till Gatduell">
         <div class="hero-copy">
           <div class="hero-kicker">LOKAL MULTIPLAYER · PREMIUM-UPPLEVELSE</div>
-          <h1>Spelet som gör <span>Umeås gator</span> till en duell.</h1>
-          <p class="hero-lead">Utmana en vän, tänk snabbt och visa vem som faktiskt kan stan. Gatduell kombinerar lokalkännedom, taktik och prestige i en spelupplevelse som känns mer som en produkt än ett hobbyprojekt.</p>
+          <h1>Spelet som gör <span>stadens gator</span> till en duell.</h1>
+          <p class="hero-lead">Börja i Umeå och ta sedan duellen vidare till fler svenska städer. Gatduell kombinerar lokalkännedom, taktik och prestige i en spelupplevelse byggd för att växa.</p>
           <div class="hero-actions">
             <button id="heroStartBtn" class="primary hero-primary" type="button">Spela nu</button>
             <button id="heroHowBtn" class="ghost hero-ghost" type="button">Så fungerar det</button>
@@ -89,21 +92,9 @@
           <p>Det ska vara glasklart varför någon vill spela — och lika glasklart hur man kommer igång.</p>
         </div>
         <div class="how-steps">
-          <article>
-            <span>1</span>
-            <strong>Välj namn och nivå</strong>
-            <p>Ställ in spelare, svårighetsgrad och tid. Sedan startar matchen direkt.</p>
-          </article>
-          <article>
-            <span>2</span>
-            <strong>Svara innan tiden går ut</strong>
-            <p>Skriv en giltig gata som ligger rätt från den aktuella gatan.</p>
-          </article>
-          <article>
-            <span>3</span>
-            <strong>Vinn tre rundor</strong>
-            <p>Först till tre tar matchen — och rätten att skryta över bäst lokalkoll.</p>
-          </article>
+          <article><span>1</span><strong>Välj namn och nivå</strong><p>Ställ in spelare, svårighetsgrad och tid. Sedan startar matchen direkt.</p></article>
+          <article><span>2</span><strong>Svara innan tiden går ut</strong><p>Skriv en giltig gata som ligger rätt från den aktuella gatan.</p></article>
+          <article><span>3</span><strong>Vinn tre rundor</strong><p>Först till tre tar matchen — och rätten att skryta över bäst lokalkoll.</p></article>
         </div>
       </section>
 
@@ -111,7 +102,8 @@
         <div class="leaderboard-copy">
           <div class="eyebrow">HALL OF FAME</div>
           <h2>Vem äger Umeå?</h2>
-          <p>Vinster från matcher på den här enheten sparas automatiskt. När vi kopplar på online-läge kan samma yta bli en global ranking.</p>
+          <p>Lokala vinster sparas på enheten. Med Gatduell ID kopplas Spelare 1 dessutom till global ranking per stad.</p>
+          <button id="globalRankingCta" class="ghost section-cta" type="button">Öppna global ranking</button>
         </div>
         <div class="leaderboard-card">
           <div class="leaderboard-head"><span>Spelare</span><span>Vinster</span><span>Matcher</span><span>Vinst %</span></div>
@@ -120,80 +112,47 @@
         </div>
       </section>
 
+      <section class="city-storefront" aria-label="Städer i Gatduell">
+        <div class="city-storefront-copy">
+          <div class="eyebrow">GATDUELL CITIES</div>
+          <h2>En spelmotor. Flera städer.</h2>
+          <p>Umeå ingår. Premiumkonton låser upp Stockholm, Göteborg och Malmö — samma duellidé, helt nya gatunät.</p>
+          <button id="cityCatalogCta" class="ghost section-cta" type="button">Utforska alla städer</button>
+        </div>
+        <div id="cityPreviewGrid" class="city-preview-grid"></div>
+      </section>
+
       <section class="match-strip" aria-label="Matchstatus">
-        <div id="player1Card" class="player-card active">
-          <span class="player-dot"></span>
-          <div class="player-copy">
-            <small>SPELARE 1</small>
-            <strong id="player1Name">Spelare 1</strong>
-          </div>
-          <b id="player1Score">0</b>
-        </div>
-
-        <div class="match-center">
-          <small>MATCH</small>
-          <strong>Runda <span id="roundNo">1</span></strong>
-          <span>Först till 3</span>
-        </div>
-
-        <div id="player2Card" class="player-card">
-          <span class="player-dot"></span>
-          <div class="player-copy">
-            <small>SPELARE 2</small>
-            <strong id="player2Name">Spelare 2</strong>
-          </div>
-          <b id="player2Score">0</b>
-        </div>
+        <div id="player1Card" class="player-card active"><span class="player-dot"></span><div class="player-copy"><small>SPELARE 1</small><strong id="player1Name">Spelare 1</strong></div><b id="player1Score">0</b></div>
+        <div class="match-center"><small>MATCH</small><strong>Runda <span id="roundNo">1</span></strong><span>Först till 3</span></div>
+        <div id="player2Card" class="player-card"><span class="player-dot"></span><div class="player-copy"><small>SPELARE 2</small><strong id="player2Name">Spelare 2</strong></div><b id="player2Score">0</b></div>
       </section>
 
       <section class="stage-grid">
         <section class="map-card">
           <div id="map" aria-label="Karta över Umeå"></div>
-
           <div class="challenge-card">
-            <div class="challenge-meta">
-              <span>AKTUELL GATA</span>
-              <span id="difficultyBadge" class="difficulty-badge"></span>
-            </div>
+            <div class="challenge-meta"><span>AKTUELL GATA</span><span id="difficultyBadge" class="difficulty-badge"></span></div>
             <strong id="currentStreet">Laddar gatunät…</strong>
             <div id="timerTrack" class="timer-track"><i id="timerBar"></i></div>
             <div id="timerText" class="timer-text"></div>
           </div>
-
-          <div class="map-tools">
-            <button id="mapModeBtn" class="map-mode" type="button" aria-pressed="false">Utforska kartan</button>
-          </div>
-
-          <div class="map-bottom">
-            <div id="chain" class="chain"></div>
-            <div class="map-note">Kartdata · Umeå kommun / NVDB</div>
-          </div>
+          <div class="map-tools"><button id="mapModeBtn" class="map-mode" type="button" aria-pressed="false">Utforska kartan</button></div>
+          <div class="map-bottom"><div id="chain" class="chain"></div><div class="map-note">Kartdata · Umeå kommun / NVDB</div></div>
         </section>
 
         <aside class="control-card">
           <div class="turn-kicker"><span></span><b id="turnLabel">Din tur</b></div>
           <h2>Vilken gata tar dig vidare?</h2>
           <p id="prompt" class="prompt">Skriv en gata som uppfyller reglerna.</p>
-
           <form id="answerForm" autocomplete="off">
             <label class="answer-label" for="streetInput">GATUNAMN</label>
-            <div class="answer-box">
-              <input id="streetInput" type="text" inputmode="text" placeholder="Exempel: Storgatan" disabled>
-              <button id="submitBtn" class="primary" type="submit" disabled>Svara</button>
-            </div>
+            <div class="answer-box"><input id="streetInput" type="text" inputmode="text" placeholder="Exempel: Storgatan" disabled><button id="submitBtn" class="primary" type="submit" disabled>Svara</button></div>
             <div id="suggestions" class="suggestions"></div>
           </form>
-
           <div id="message" class="message">Gatunätet hämtas…</div>
           <div id="pathHint" class="path-hint hidden"></div>
-
-          <div class="rules">
-            <div class="rules-icon" aria-hidden="true">↗</div>
-            <div>
-              <strong>Så avgörs rundan</strong>
-              <span id="rulesText"></span>
-            </div>
-          </div>
+          <div class="rules"><div class="rules-icon" aria-hidden="true">↗</div><div><strong>Så avgörs rundan</strong><span id="rulesText"></span></div></div>
         </aside>
       </section>
 
@@ -203,68 +162,38 @@
 
   <div id="modal" class="modal">
     <div class="modal-card">
-      <div class="modal-brand">
-        <span class="brand-mark large" aria-hidden="true"><i></i><i></i><i></i></span>
-        <div>
-          <div class="eyebrow">GATDUELL · UMEÅ</div>
-          <h2 id="modalTitle">Starta match</h2>
-        </div>
-      </div>
+      <div class="modal-brand"><span class="brand-mark large" aria-hidden="true"><i></i><i></i><i></i></span><div><div class="eyebrow">GATDUELL MATCH</div><h2 id="modalTitle">Starta match</h2></div></div>
       <p id="modalText">Bygg er egen prestige-match. Välj spelare, svårighetsgrad och tid — sedan är det bara att köra.</p>
-
       <div id="setupFields">
-        <div class="setup-section">
-          <span class="setup-heading">SPELARE</span>
-          <div class="two-cols">
-            <label>Spelare 1<input id="name1" type="text" value="Spelare 1" maxlength="24"></label>
-            <label>Spelare 2<input id="name2" type="text" value="Spelare 2" maxlength="24"></label>
-          </div>
-        </div>
+        <div class="setup-section"><span class="setup-heading">SPELARE</span><div class="two-cols"><label>Spelare 1<input id="name1" type="text" value="Spelare 1" maxlength="24"></label><label>Spelare 2<input id="name2" type="text" value="Spelare 2" maxlength="24"></label></div></div>
         <div class="setup-section">
           <span class="setup-heading">MATCHINSTÄLLNINGAR</span>
-          <div class="two-cols">
-            <label>Svårighetsgrad
-              <select id="difficultySelect">
-                <option value="hard">🔴 Hard · direkt anslutning</option>
-                <option value="medium">🟡 Medium · max 2 steg</option>
-                <option value="easy">🟢 Easy · max 3 steg</option>
-              </select>
-            </label>
-            <label>Tid per tur
-              <select id="timerSelect">
-                <option value="0">Ingen tidsgräns</option>
-                <option value="10">10 sekunder</option>
-                <option value="15">15 sekunder</option>
-                <option value="20" selected>20 sekunder</option>
-                <option value="30">30 sekunder</option>
-                <option value="45">45 sekunder</option>
-                <option value="60">60 sekunder</option>
-              </select>
-            </label>
-          </div>
+          <div class="two-cols"><label>Stad<select id="citySelect"></select></label><label>Svårighetsgrad<select id="difficultySelect"><option value="hard">🔴 Hard · direkt anslutning</option><option value="medium">🟡 Medium · max 2 steg</option><option value="easy">🟢 Easy · max 3 steg</option></select></label></div>
+          <div class="two-cols compact-two-cols"><label>Tid per tur<select id="timerSelect"><option value="0">Ingen tidsgräns</option><option value="10">10 sekunder</option><option value="15">15 sekunder</option><option value="20" selected>20 sekunder</option><option value="30">30 sekunder</option><option value="45">45 sekunder</option><option value="60">60 sekunder</option></select></label><div class="setup-account-note"><small>ONLINEPROFIL</small><strong id="setupAccountState">Gästläge</strong><span id="setupPremiumState">Umeå ingår gratis</span></div></div>
         </div>
       </div>
-
-      <div id="resultCard" class="result-card hidden">
-        <div class="result-crown" aria-hidden="true">🏆</div>
-        <div class="result-copy">
-          <small>MATCHRESULTAT</small>
-          <strong id="resultWinner">—</strong>
-          <span id="resultScore">—</span>
-          <em id="resultMeta">—</em>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button id="modalPrimary" class="primary big" type="button" disabled>Laddar gatunät…</button>
-        <button id="shareResultBtn" class="share-button hidden" type="button">Dela resultat</button>
-      </div>
+      <div id="resultCard" class="result-card hidden"><div class="result-crown" aria-hidden="true">🏆</div><div class="result-copy"><small>MATCHRESULTAT</small><strong id="resultWinner">—</strong><span id="resultScore">—</span><em id="resultMeta">—</em></div></div>
+      <div class="modal-actions"><button id="modalPrimary" class="primary big" type="button" disabled>Laddar gatunät…</button><button id="shareResultBtn" class="share-button hidden" type="button">Dela resultat</button></div>
       <div id="loadStatus" class="load-status">Hämtar Umeås gator…</div>
     </div>
   </div>
 
+  <div id="accountModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card secondary-modal">
+      <button class="modal-close" type="button" data-close="accountModal">×</button><div class="eyebrow">GATDUELL ID</div><h2>Ditt konto</h2><p id="backendStatusText">Kontot kopplar vinster till global ranking och premiumåtkomst.</p>
+      <div id="accountSignedOut"><div class="account-fields"><label>Visningsnamn<input id="accountDisplayName" type="text" maxlength="40" placeholder="Ditt namn"></label><label>E-post<input id="accountEmail" type="email" autocomplete="email" placeholder="namn@exempel.se"></label><label>Lösenord<input id="accountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Minst 6 tecken"></label></div><div class="modal-actions split-actions"><button id="signInBtn" class="primary" type="button">Logga in</button><button id="signUpBtn" class="share-button" type="button">Skapa konto</button></div></div>
+      <div id="accountSignedIn" class="account-profile hidden"><div class="account-profile-card"><small>INLOGGAD SOM</small><strong id="accountProfileName">—</strong><span id="accountProfileEmail">—</span><b id="accountPremiumBadge" class="premium-badge">FREE</b></div><div class="modal-actions split-actions"><button id="premiumBtn" class="primary" type="button">Skaffa Premium</button><button id="signOutBtn" class="share-button" type="button">Logga ut</button></div></div>
+      <div id="accountMessage" class="account-message"></div>
+    </div>
+  </div>
+
+  <div id="rankingModal" class="modal hidden" aria-hidden="true"><div class="modal-card secondary-modal ranking-modal-card"><button class="modal-close" type="button" data-close="rankingModal">×</button><div class="eyebrow">GLOBAL RANKING</div><h2>Gatduell League</h2><div class="ranking-toolbar"><select id="rankingCitySelect"></select><button id="refreshRankingBtn" class="ghost" type="button">Uppdatera</button></div><div id="globalRankingStatus" class="global-ranking-status"></div><div class="global-ranking-table"><div class="global-ranking-head"><span>#</span><span>Spelare</span><span>Poäng</span><span>V</span><span>M</span></div><div id="globalRankingRows"></div></div></div></div>
+
+  <div id="citiesModal" class="modal hidden" aria-hidden="true"><div class="modal-card secondary-modal city-modal-card"><button class="modal-close" type="button" data-close="citiesModal">×</button><div class="eyebrow">GATDUELL CITIES</div><h2>Välj din stad</h2><p>Umeå är gratis. Premium låser upp fler svenska gatunät och global ranking per stad.</p><div id="cityCatalogGrid" class="city-catalog-grid"></div><div id="cityCatalogMessage" class="account-message"></div></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script><script src="cities.js"></script><script src="backend.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="engine.js"></script>
-  <script src="app.js"></script>
+  <script src="engine.js"></script><script src="app.js"></script>
 </body>
 </html>

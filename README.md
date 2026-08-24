@@ -1,31 +1,42 @@
-# Gatduell Umeå
+# Gatduell
 
-Ett fristående lokalt geografispel byggt från Gatduell-idén i Orten 2.0.
+Gatduell är ett snabbt lokalkännedomsspel där två spelare turas om att ange gator som hänger ihop. Umeå ingår gratis och arkitekturen stödjer premiumstäder, konto och global ranking.
 
-Två spelare turas om att ange en gata i Umeå som ligger rätt i gatunätet från den aktuella gatan. Fel svar, återanvänd gata eller (om vald) utgången tid förlorar rundan. Först till tre rundvinster vinner matchen.
+## Spelfunktioner
 
-## Spellgen
+- 2 spelare på samma enhet
+- först till 3 rundvinster
+- Hard: direkt anslutande gata
+- Medium: högst 2 steg
+- Easy: högst 3 steg
+- valbar tidsgräns
+- karta som följer aktuell gata
+- lokal Hall of Fame och delningsbara resultat
 
-- **Hard** – gatan måste vara direkt anslutande.
-- **Medium** – direkt anslutning eller via en mellanliggande gata, max 2 steg.
-- **Easy** – max 3 steg.
-- Tidsgräns per tur: ingen, 10, 15, 20, 30, 45 eller 60 sekunder.
-- Rondeller och små trafiköar hanteras med en särskild anslutningslogik så att gatarmar som hör till samma korsning kan kopplas ihop korrekt.
+## Gatduell Cities
 
-## Data
+- Umeå — gratis, Umeå kommuns/NVDB:s öppna data
+- Stockholm — Premium, OpenStreetMap via Overpass
+- Göteborg — Premium, OpenStreetMap via Overpass
+- Malmö — Premium, OpenStreetMap via Overpass
 
-Spelet hämtar Umeås vägdata från OpenDataUmea-datasetet `roads_umea` när sidan startas. Portalen beskriver datasetet som ett exempel från Nationella vägdatabasen och hänvisar till Trafikverket för aktuell vägdata.
+## Konto, ranking och Premium
 
-## Kör lokalt
+Frontendlagret finns i `backend.js`. Utan backend fungerar spelet fortfarande i gästläge. För att aktivera konto och global ranking:
 
-Eftersom webbläsaren hämtar data via `fetch` bör spelet köras via en enkel lokal webbserver i stället för genom att dubbelklicka på `index.html`.
+1. Skapa ett Supabase-projekt.
+2. Kör `supabase/schema.sql`.
+3. Lägg projektets URL och publishable/anon key i `config.js`.
+4. Lägg GitHub Pages-adressen som Auth Site URL/Redirect URL i Supabase.
+5. Koppla en betrodd checkout/webhook som sätter `profiles.is_premium=true` och lägg checkout-länken i `config.js`.
+
+**Lägg aldrig en Supabase service-role key i GitHub Pages eller annan frontendkod.**
+
+## Test
 
 ```bash
-python -m http.server 8080
+npm test
+npm run check
 ```
 
-Öppna sedan `http://localhost:8080`.
-
-## GitHub Pages
-
-Repot innehåller ett Pages-workflow. Aktivera **GitHub Pages → Source: GitHub Actions** i repository-inställningarna om det behövs.
+Testerna omfattar gatkorsningar, rondellfallet Hissjövägen ↔ Östra Kyrkogatan, svårighetsgrader samt stadskatalog/Overpass-konvertering.

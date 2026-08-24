@@ -5,6 +5,6 @@
   "description": "Gatduell – lokalt gatspel med stadskatalog, premiumåtkomst och rankinggrund",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check engine.js && node --check cities.js && node --check backend.js && node --check app.js"
+    "check": "node --check engine.js && node --check cities.js && node --check backend.js && node --check app.js && node --check app-state.js && node --check app-online.js && node --check app-game.js"
   }
 }

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07131f">
+  <title>Gatduell Umeå</title>
+  <meta name="description" content="Ett lokalt geografispel: vilken gata i Umeå ansluter till den aktuella gatan?">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://a.basemaps.cartocdn.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynHTNCwAKQ9sSQRHCHk8Fccsq0Zk=" crossorigin="">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">UMEÅ · GATKUNSKAP</div>
+        <h1>🏙️ Gatduell</h1>
+      </div>
+      <button id="newGameBtn" class="ghost" type="button">Ny match</button>
+    </header>
+
+    <section class="game-grid">
+      <aside class="panel score-panel">
+        <div id="player1Card" class="player-card active">
+          <span>Spelare 1</span>
+          <strong id="player1Name">Spelare 1</strong>
+          <b id="player1Score">0</b>
+        </div>
+        <div id="player2Card" class="player-card">
+          <span>Spelare 2</span>
+          <strong id="player2Name">Spelare 2</strong>
+          <b id="player2Score">0</b>
+        </div>
+
+        <div class="round-label">RUNDA <span id="roundNo">1</span></div>
+        <div class="current-street">
+          <small>AKTUELL GATA</small>
+          <strong id="currentStreet">Laddar gatunät…</strong>
+          <div id="timerTrack" class="timer-track"><i id="timerBar"></i></div>
+          <div id="timerText" class="timer-text"></div>
+        </div>
+        <div id="chain" class="chain"></div>
+      </aside>
+
+      <section class="map-wrap">
+        <div id="map" aria-label="Karta över Umeå"></div>
+        <div class="map-note">Kartdata: Umeå kommun / NVDB-exempel</div>
+      </section>
+
+      <aside class="panel play-panel">
+        <div id="difficultyBadge" class="difficulty-badge"></div>
+        <p id="prompt" class="prompt">Skriv en gata som uppfyller reglerna.</p>
+
+        <form id="answerForm" autocomplete="off">
+          <label class="sr-only" for="streetInput">Gatunamn</label>
+          <input id="streetInput" type="text" inputmode="text" placeholder="Skriv gatunamn…" disabled>
+          <div id="suggestions" class="suggestions"></div>
+          <button id="submitBtn" class="primary" type="submit" disabled>Svara</button>
+        </form>
+
+        <div id="message" class="message">Gatunätet hämtas…</div>
+        <div id="pathHint" class="path-hint hidden"></div>
+
+        <div class="rules">
+          <strong>Så avgörs rundan</strong>
+          <span id="rulesText"></span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div id="modal" class="modal">
+    <div class="modal-card">
+      <div class="eyebrow">GATDUELL · UMEÅ</div>
+      <h2 id="modalTitle">Starta match</h2>
+      <p id="modalText">Ni turas om att skriva gator i Umeå. Fel svar förlorar rundan. Först till tre rundvinster vinner.</p>
+
+      <div id="setupFields">
+        <div class="two-cols">
+          <label>Spelare 1<input id="name1" type="text" value="Spelare 1" maxlength="24"></label>
+          <label>Spelare 2<input id="name2" type="text" value="Spelare 2" maxlength="24"></label>
+        </div>
+        <div class="two-cols">
+          <label>Svårighetsgrad
+            <select id="difficultySelect">
+              <option value="hard">🔴 Hard · direkt anslutning</option>
+              <option value="medium">🟡 Medium · max 2 steg</option>
+              <option value="easy">🟢 Easy · max 3 steg</option>
+            </select>
+          </label>
+          <label>Tid per tur
+            <select id="timerSelect">
+              <option value="0">Ingen tidsgräns</option>
+              <option value="10">10 sekunder</option>
+              <option value="15">15 sekunder</option>
+              <option value="20" selected>20 sekunder</option>
+              <option value="30">30 sekunder</option>
+              <option value="45">45 sekunder</option>
+              <option value="60">60 sekunder</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <button id="modalPrimary" class="primary big" type="button" disabled>Laddar gatunät…</button>
+      <div id="loadStatus" class="load-status">Hämtar Umeås gator…</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

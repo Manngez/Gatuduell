@@ -23,19 +23,60 @@
   let timerId=null;
   let state=null;
   let modalMode='setup';
+  let mapExplore=false;
+  let mapResizeObserver=null;
 
   const saved={
     get(key,fallback){try{return localStorage.getItem(`umea-gatduell:${key}`)??fallback;}catch{return fallback;}},
     set(key,value){try{localStorage.setItem(`umea-gatduell:${key}`,String(value));}catch{}}
   };
 
+  function invalidateMapSize(){
+    if(!map) return;
+    requestAnimationFrame(()=>{
+      try{map.invalidateSize(false);}catch{}
+    });
+  }
+
+  function setMapExplore(active){
+    mapExplore=Boolean(active);
+    if(!map) return;
+    const desktop=window.innerWidth>720;
+    const interactive=desktop||mapExplore;
+    if(interactive){
+      map.dragging.enable();
+      map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+    }else{
+      map.dragging.disable();
+      map.touchZoom.disable();
+      map.doubleClickZoom.disable();
+    }
+    map.scrollWheelZoom.disable();
+    const button=$('mapModeBtn');
+    if(button){
+      button.hidden=desktop;
+      button.setAttribute('aria-pressed',String(!desktop&&mapExplore));
+      button.textContent=!desktop&&mapExplore?'Lås kartan':'Utforska kartan';
+    }
+  }
+
   function initMap(){
     if(!window.L) return;
-    map=L.map('map',{zoomControl:true,minZoom:10,maxZoom:19}).setView([63.8258,20.2630],13);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{
+    map=L.map('map',{zoomControl:false,minZoom:10,maxZoom:19,scrollWheelZoom:false}).setView([63.8258,20.2630],13);
+    L.control.zoom({position:'bottomright'}).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{
       maxZoom:20,
       attribution:'&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
+    setMapExplore(false);
+    invalidateMapSize();
+    window.addEventListener('resize',()=>{setMapExplore(false);invalidateMapSize();});
+    window.addEventListener('orientationchange',()=>{setMapExplore(false);invalidateMapSize();});
+    if('ResizeObserver' in window){
+      mapResizeObserver=new ResizeObserver(invalidateMapSize);
+      mapResizeObserver.observe($('map'));
+    }
   }
 
   async function loadData(){
@@ -125,7 +166,7 @@
     const level=currentLevel();
     const result=E.validateMove(graph,state.current,raw,state.used,level.steps);
     if(!result.ok){
-      const winner=otherPlayer();
+      const loser=currentPlayer(),winner=otherPlayer();
       winner.score++;
       let reason='Svaret är inte giltigt.';
       if(result.reason==='unknown') reason=`${raw} finns inte i det spelbara gatunätet.`;
@@ -218,7 +259,10 @@
     $('modal').classList.remove('hidden');
   }
 
-  function hideModal(){$('modal').classList.add('hidden');}
+  function hideModal(){
+    $('modal').classList.add('hidden');
+    setTimeout(invalidateMapSize,80);
+  }
 
   function modalPrimary(){
     if(modalMode==='setup'){startMatch();return;}
@@ -258,6 +302,7 @@
     $('player2Score').textContent=String(state.players[1].score);
     $('player1Card').classList.toggle('active',state.running&&state.turn===0);
     $('player2Card').classList.toggle('active',state.running&&state.turn===1);
+    if($('turnLabel')) $('turnLabel').textContent=state.running?`${currentPlayer().name} spelar`:'Rundan avgjord';
   }
 
   function highlightStreet(name){
@@ -265,9 +310,11 @@
     if(highlightLayer){highlightLayer.remove();highlightLayer=null;}
     const street=graph.get(name);
     if(!street?.lines?.length) return;
-    const layers=street.lines.map(line=>L.polyline(line.map(([lon,lat])=>[lat,lon]),{color:'#1ecfe0',weight:6,opacity:.92}));
+    const layers=street.lines.map(line=>L.polyline(line.map(([lon,lat])=>[lat,lon]),{color:'#68f3df',weight:6,opacity:.96,lineCap:'round'}));
     highlightLayer=L.featureGroup(layers).addTo(map);
-    try{map.fitBounds(highlightLayer.getBounds().pad(.55),{maxZoom:16,animate:true});}catch{}
+    if(!mapExplore){
+      try{map.fitBounds(highlightLayer.getBounds().pad(window.innerWidth<=720?.75:.58),{maxZoom:16,animate:window.innerWidth>720});}catch{}
+    }
   }
 
   function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -301,6 +348,7 @@
     });
     $('modalPrimary').addEventListener('click',modalPrimary);
     $('newGameBtn').addEventListener('click',showSetup);
+    $('mapModeBtn')?.addEventListener('click',()=>setMapExplore(!mapExplore));
   }
 
   restoreSettings();

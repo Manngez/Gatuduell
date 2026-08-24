@@ -28,6 +28,98 @@
     </header>
 
     <section class="content-shell">
+      <section id="landing" class="hero-panel" aria-label="Introduktion till Gatduell">
+        <div class="hero-copy">
+          <div class="hero-kicker">LOKAL MULTIPLAYER · PREMIUM-UPPLEVELSE</div>
+          <h1>Spelet som gör <span>Umeås gator</span> till en duell.</h1>
+          <p class="hero-lead">Utmana en vän, tänk snabbt och visa vem som faktiskt kan stan. Gatduell kombinerar lokalkännedom, taktik och prestige i en spelupplevelse som känns mer som en produkt än ett hobbyprojekt.</p>
+          <div class="hero-actions">
+            <button id="heroStartBtn" class="primary hero-primary" type="button">Spela nu</button>
+            <button id="heroHowBtn" class="ghost hero-ghost" type="button">Så fungerar det</button>
+          </div>
+          <div class="hero-stats">
+            <div><strong>2</strong><span>spelare på samma skärm</span></div>
+            <div><strong>3</strong><span>rundvinster till seger</span></div>
+            <div><strong>100%</strong><span>Umeå-fokus och revanschlust</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card hero-card-main">
+            <small>VARFÖR DET HÄR FUNKAR</small>
+            <strong>Lätt att förstå. Svårt att bemästra.</strong>
+            <p>Ett svar tar en sekund att ge — men att hålla huvudet kallt när tiden tickar är en helt annan sak.</p>
+          </div>
+          <div class="hero-mini-grid">
+            <article class="hero-mini-card">
+              <small>SNABBT</small>
+              <strong>Kom igång direkt</strong>
+              <p>Inga krångliga menyer. Starta, skriv, duellera.</p>
+            </article>
+            <article class="hero-mini-card">
+              <small>SMART</small>
+              <strong>Tydlig progression</strong>
+              <p>Easy, Medium eller Hard beroende på hur hård ni vill att matchen ska bli.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="howItWorks" class="promo-grid" aria-label="Fördelar och spelupplägg">
+        <article class="promo-card">
+          <div class="promo-icon">⚡</div>
+          <strong>Explosiv spelkänsla</strong>
+          <p>Varje runda känns direkt. Du fattar reglerna på några sekunder men vill spela om och om igen.</p>
+        </article>
+        <article class="promo-card">
+          <div class="promo-icon">🧠</div>
+          <strong>Lokalkännedom på riktigt</strong>
+          <p>Det räcker inte att känna igen ett namn. Du måste förstå hur Umeås gator faktiskt hänger ihop.</p>
+        </article>
+        <article class="promo-card">
+          <div class="promo-icon">🏆</div>
+          <strong>Perfekt för premiumifiering</strong>
+          <p>Fler städer, online-ligor, dagliga utmaningar och topplistor ligger naturligt nästa i utvecklingen.</p>
+        </article>
+      </section>
+
+      <section class="how-strip" aria-label="Så fungerar spelet">
+        <div class="how-intro">
+          <div class="eyebrow">SÅ HÄR SPELAR NI</div>
+          <h2>Tre steg till en riktigt bra duell</h2>
+          <p>Det ska vara glasklart varför någon vill spela — och lika glasklart hur man kommer igång.</p>
+        </div>
+        <div class="how-steps">
+          <article>
+            <span>1</span>
+            <strong>Välj namn och nivå</strong>
+            <p>Ställ in spelare, svårighetsgrad och tid. Sedan startar matchen direkt.</p>
+          </article>
+          <article>
+            <span>2</span>
+            <strong>Svara innan tiden går ut</strong>
+            <p>Skriv en giltig gata som ligger rätt från den aktuella gatan.</p>
+          </article>
+          <article>
+            <span>3</span>
+            <strong>Vinn tre rundor</strong>
+            <p>Först till tre tar matchen — och rätten att skryta över bäst lokalkoll.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="leaderboardPanel" class="leaderboard-panel" aria-label="Hall of Fame">
+        <div class="leaderboard-copy">
+          <div class="eyebrow">HALL OF FAME</div>
+          <h2>Vem äger Umeå?</h2>
+          <p>Vinster från matcher på den här enheten sparas automatiskt. När vi kopplar på online-läge kan samma yta bli en global ranking.</p>
+        </div>
+        <div class="leaderboard-card">
+          <div class="leaderboard-head"><span>Spelare</span><span>Vinster</span><span>Matcher</span><span>Vinst %</span></div>
+          <div id="leaderboardRows" class="leaderboard-rows"></div>
+          <div id="leaderboardEmpty" class="leaderboard-empty">Ingen har tagit en seger ännu. Första matchen sätter ribban.</div>
+        </div>
+      </section>
+
       <section class="match-strip" aria-label="Matchstatus">
         <div id="player1Card" class="player-card active">
           <span class="player-dot"></span>
@@ -118,7 +210,7 @@
           <h2 id="modalTitle">Starta match</h2>
         </div>
       </div>
-      <p id="modalText">Ni turas om att skriva gator i Umeå. Fel svar förlorar rundan. Först till tre rundvinster vinner.</p>
+      <p id="modalText">Bygg er egen prestige-match. Välj spelare, svårighetsgrad och tid — sedan är det bara att köra.</p>
 
       <div id="setupFields">
         <div class="setup-section">
@@ -153,7 +245,20 @@
         </div>
       </div>
 
-      <button id="modalPrimary" class="primary big" type="button" disabled>Laddar gatunät…</button>
+      <div id="resultCard" class="result-card hidden">
+        <div class="result-crown" aria-hidden="true">🏆</div>
+        <div class="result-copy">
+          <small>MATCHRESULTAT</small>
+          <strong id="resultWinner">—</strong>
+          <span id="resultScore">—</span>
+          <em id="resultMeta">—</em>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="modalPrimary" class="primary big" type="button" disabled>Laddar gatunät…</button>
+        <button id="shareResultBtn" class="share-button hidden" type="button">Dela resultat</button>
+      </div>
       <div id="loadStatus" class="load-status">Hämtar Umeås gator…</div>
     </div>
   </div>

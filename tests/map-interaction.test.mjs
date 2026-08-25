@@ -23,3 +23,11 @@ test('fullskärmsbyte ritar om ett enda tilelager efter resize',()=>{
   assert.match(state,/S\.baseLayer\.redraw\(\)/);
   assert.doesNotMatch(state,/new ResizeObserver/);
 });
+
+test('pinch är stabil på mobil',()=>{
+  assert.match(state,/touchZoom:'center'/);
+  assert.match(state,/inertia:false/);
+  assert.match(state,/zoomAnimation:false/);
+  assert.match(state,/if\(document\.body\.classList\.contains\('game-live'\)\) return/);
+  assert.match(css,/height:100svh!important/);
+});

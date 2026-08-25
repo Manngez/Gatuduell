@@ -14,9 +14,31 @@
   function setup(){stopTimer();S.modalMode='setup';live(false);$('modalTitle').textContent='Starta match';$('modalText').textContent=`Ni turas om att skriva gator i ${S.city.name}. Fel svar förlorar rundan. Först till tre rundvinster vinner.`;$('setupFields').classList.remove('hidden');$('loadStatus').classList.remove('hidden');$('resultCard').classList.add('hidden');$('shareResultBtn').classList.add('hidden');S.lastShare=null;$('modalPrimary').textContent=S.graph?'Starta match':`Laddar ${S.city.name}…`;$('modalPrimary').disabled=!S.graph;open('modal')}
   function modalPrimary(){if(S.modalMode==='setup')return start();if(S.modalMode==='next'){close('modal');S.state.round++;return round()}if(S.modalMode==='restart')setup()}
   function setMessage(t,k=''){const e=$('message');e.textContent=t;e.className=`message${k?` ${k}`:''}`}
-  function render(){if(!S.state)return;players();$('roundNo').textContent=S.state.round;$('currentStreet').textContent=S.state.current||'—';$('chain').innerHTML=S.state.used.slice(-10).map(n=>`<span>${G.escapeHtml(n)}</span>`).join('');const lv=level();$('difficultyBadge').textContent=`${lv.icon} ${lv.label} · ${lv.help}`;$('rulesText').textContent=S.state.turnSeconds?'Fel anslutning, återanvänd gata eller slut på tiden förlorar rundan. Först till tre vinner.':'Fel anslutning eller återanvänd gata förlorar rundan. Först till tre vinner.';highlightStreet(S.state.current)}
+  function render(){if(!S.state)return;players();$('roundNo').textContent=S.state.round;$('currentStreet').textContent=S.state.current||'—';$('chain').innerHTML=S.state.used.slice(-10).map(n=>`<span>${G.escapeHtml(n)}</span>`).join('');const lv=level();$('difficultyBadge').textContent=`${lv.icon} ${lv.label} · ${lv.help}`;$('rulesText').textContent=S.state.turnSeconds?'Fel anslutning, återanvänd gata eller slut på tiden förlorar rundan. Först till tre vinner.':'Fel anslutning eller återanvänd gata förlorar rundan. Först till tre vinner.';drawStreetHistory()}
   function players(){$('player1Name').textContent=S.state.players[0].name;$('player2Name').textContent=S.state.players[1].name;$('player1Score').textContent=S.state.players[0].score;$('player2Score').textContent=S.state.players[1].score;$('player1Card').classList.toggle('active',S.state.running&&S.state.turn===0);$('player2Card').classList.toggle('active',S.state.running&&S.state.turn===1);$('turnLabel').textContent=S.state.running?`${S.state.players[S.state.turn].name} spelar`:'Rundan avgjord'}
-  function highlightStreet(name){if(!S.map||!S.graph||!name)return;if(S.highlight){S.highlight.remove();S.highlight=null}const s=S.graph.get(name);if(!s?.lines?.length)return;S.highlight=L.featureGroup(s.lines.map(line=>L.polyline(line.map(([lon,lat])=>[lat,lon]),{color:'#1ecfe0',weight:6,opacity:.92}))).addTo(S.map);if(!S.mapExplore)try{S.map.fitBounds(S.highlight.getBounds().pad(innerWidth<=720?.75:.58),{maxZoom:16,animate:innerWidth>720})}catch{}}
+
+  function streetPolylines(name,style){
+    const street=S.graph?.get(name);
+    if(!street?.lines?.length)return[];
+    return street.lines.map(line=>L.polyline(line.map(([lon,lat])=>[lat,lon]),{interactive:false,lineCap:'round',lineJoin:'round',...style}));
+  }
+
+  function drawStreetHistory(){
+    if(!S.map||!S.graph||!S.state)return;
+    if(S.usedLayer){S.usedLayer.remove();S.usedLayer=null}
+    if(S.highlight){S.highlight.remove();S.highlight=null}
+    const used=S.state.used||[];
+    const previous=used.slice(0,-1);
+    const historyLayers=previous.flatMap(name=>streetPolylines(name,{color:'#10a99a',weight:5,opacity:.58}));
+    if(historyLayers.length)S.usedLayer=L.featureGroup(historyLayers).addTo(S.map);
+    const current=used.at(-1);
+    if(!current)return;
+    const halo=streetPolylines(current,{color:'#ffffff',weight:11,opacity:.9});
+    const active=streetPolylines(current,{color:'#ff9f1c',weight:7,opacity:.98});
+    const layers=[...halo,...active];
+    if(layers.length)S.highlight=L.featureGroup(layers).addTo(S.map);
+  }
+
   function suggestions(){if(!S.graph||!S.state?.running)return $('suggestions').innerHTML='';const v=$('streetInput').value;if(v.trim().length<2)return $('suggestions').innerHTML='';$('suggestions').innerHTML=E.suggestions(S.graph,v,7).map(n=>`<button type="button" data-name="${G.escapeHtml(n)}">${G.escapeHtml(n)}</button>`).join('')}
   function bind(){
     $('answerForm').addEventListener('submit',e=>{e.preventDefault();answer()});$('streetInput').addEventListener('input',suggestions);$('suggestions').addEventListener('click',e=>{const b=e.target.closest('button[data-name]');if(b){$('streetInput').value=b.dataset.name;$('suggestions').innerHTML='';$('streetInput').focus()}});$('modalPrimary').addEventListener('click',modalPrimary);$('newGameBtn').addEventListener('click',setup);$('heroStartBtn')?.addEventListener('click',setup);$('heroHowBtn')?.addEventListener('click',()=>$('howItWorks')?.scrollIntoView({behavior:'smooth'}));$('mapModeBtn')?.addEventListener('click',()=>setMapExplore(!S.mapExplore));$('shareResultBtn')?.addEventListener('click',share);

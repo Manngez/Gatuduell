@@ -4,9 +4,9 @@
   if(!E||!C) throw new Error('Gatduell-moduler saknas.');
   const LEVELS={hard:{label:'Hard',icon:'🔴',steps:1,help:'direkt anslutande gata'},medium:{label:'Medium',icon:'🟡',steps:2,help:'direkt eller via en gata'},easy:{label:'Easy',icon:'🟢',steps:3,help:'upp till två mellanliggande gator'}};
   const store={get(k,f=''){try{return localStorage.getItem(`umea-gatduell:${k}`)??f}catch{return f}},set(k,v){try{localStorage.setItem(`umea-gatduell:${k}`,String(v))}catch{}}};
-  const S={requested:store.get('city','umea'),city:null,profile:null,session:null,graph:null,map:null,baseLayer:null,highlight:null,timer:null,state:null,modalMode:'setup',mapExplore:false,lastShare:null,mapRefreshTimer:null};
+  const S={requested:store.get('city','umea'),city:null,profile:null,session:null,graph:null,map:null,baseLayer:null,highlight:null,usedLayer:null,timer:null,state:null,modalMode:'setup',mapExplore:false,lastShare:null,mapRefreshTimer:null};
   S.city=C.get(S.requested);if(S.city.premium)S.city=C.get('umea');
-  const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const premium=()=>!!S.profile?.is_premium,locked=c=>!!c?.premium&&!premium(),level=()=>LEVELS[S.state?.difficulty||$('difficultySelect')?.value]||LEVELS.hard;
   const open=id=>{$(id)?.classList.remove('hidden');$(id)?.setAttribute('aria-hidden','false')},close=id=>{$(id)?.classList.add('hidden');$(id)?.setAttribute('aria-hidden','true')};
 
@@ -36,11 +36,13 @@
       maxZoom:19,
       scrollWheelZoom:false,
       dragging:true,
-      touchZoom:true,
+      touchZoom:'center',
       doubleClickZoom:true,
-      zoomAnimation:true,
+      zoomAnimation:false,
       fadeAnimation:false,
-      markerZoomAnimation:true
+      markerZoomAnimation:false,
+      inertia:false,
+      bounceAtZoomLimits:false
     }).setView(S.city.center,S.city.zoom||13);
     L.control.zoom({position:'bottomright'}).addTo(S.map);
     S.baseLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}.png',{
@@ -50,22 +52,26 @@
       attribution:'&copy; OpenStreetMap &copy; CARTO',
       updateWhenIdle:true,
       updateWhenZooming:false,
-      keepBuffer:2
+      keepBuffer:3
     }).addTo(S.map);
     setMapExplore(false);
 
     let resizeTimer=null;
     const onResize=()=>{
+      if(document.body.classList.contains('game-live')) return;
       clearTimeout(resizeTimer);
       resizeTimer=setTimeout(()=>{
-        setMapExplore(document.body.classList.contains('game-live'));
+        setMapExplore(false);
         refreshMapTiles(false);
-      },160);
+      },180);
     };
     window.addEventListener('resize',onResize,{passive:true});
     window.addEventListener('orientationchange',()=>{
       clearTimeout(resizeTimer);
-      resizeTimer=setTimeout(()=>refreshMapTiles(true),260);
+      resizeTimer=setTimeout(()=>{
+        setMapExplore(document.body.classList.contains('game-live'));
+        refreshMapTiles(true);
+      },320);
     },{passive:true});
   }
 
@@ -100,7 +106,7 @@
     try{
       const {features}=await C.load(S.city);$('loadStatus').textContent=`Bygger gatunät från ${features.length.toLocaleString('sv-SE')} vägsegment…`;await new Promise(r=>requestAnimationFrame(r));
       S.graph=E.buildGraph(features,{bbox:S.city.bbox,toleranceMeters:7,junctionRadiusMeters:32});if(!S.graph.size)throw new Error('Tomt gatunät');
-      if(S.highlight){S.highlight.remove();S.highlight=null}S.map?.setView(S.city.center,S.city.zoom||13,{animate:false});refreshMapTiles(true);
+      if(S.highlight){S.highlight.remove();S.highlight=null}if(S.usedLayer){S.usedLayer.remove();S.usedLayer=null}S.map?.setView(S.city.center,S.city.zoom||13,{animate:false});refreshMapTiles(true);
       $('loadStatus').textContent=`Klart · ${S.graph.size.toLocaleString('sv-SE')} spelbara gatunamn i ${S.city.name}`;$('modalPrimary').disabled=false;$('modalPrimary').textContent='Starta match';return true;
     }catch(err){console.error(err);$('loadStatus').textContent=`Kunde inte hämta gatunätet för ${S.city.name}. Försök igen.`;$('modalPrimary').disabled=true;$('modalPrimary').textContent='Gatunät saknas';return false}
   }

@@ -12,11 +12,21 @@ test('kartstabilitet laddas efter motorn men före appen',()=>{
   assert.ok(engine>=0 && stable>engine && app>stable);
 });
 
-test('mobilkartan är centrumstabil och utan inertia eller animation',()=>{
+test('mobilkartan är centrumstabil utan inertia eller fractional zoom',()=>{
   assert.match(stability,/touchZoom:'center'/);
   assert.match(stability,/inertia:false/);
+  assert.match(stability,/zoomSnap:1/);
+  assert.match(stability,/zoomDelta:1/);
   assert.match(stability,/zoomAnimation:false/);
   assert.match(stability,/fadeAnimation:false/);
+});
+
+test('tilelagret använder en enda fast 256px CARTO-host utan retina',()=>{
+  assert.match(stability,/https:\/\/a\.basemaps\.cartocdn\.com\/light_nolabels\/\{z\}\/\{x\}\/\{y\}\.png/);
+  assert.match(stability,/detectRetina:false/);
+  assert.match(stability,/tileSize:256/);
+  assert.doesNotMatch(stability,/\{s\}\.basemaps/);
+  assert.doesNotMatch(stability,/\{r\}\.png/);
 });
 
 test('automatisk flyToBounds blockeras och endast recenter tillåts',()=>{
@@ -26,10 +36,13 @@ test('automatisk flyToBounds blockeras och endast recenter tillåts',()=>{
   assert.match(stability,/animate:false/);
 });
 
-test('startgata väljs inom centrala Umeå',()=>{
+test('startgata använder Gatduells riktiga graf-API och väljs i centrala Umeå',()=>{
+  assert.match(stability,/graph\?\.names/);
+  assert.match(stability,/graph\.get\?\.\(name\)/);
+  assert.match(stability,/graph\.neighbors\?\.\(name\)/);
+  assert.doesNotMatch(stability,/graph\.entries\(\)/);
   assert.match(stability,/minLat:63\.78/);
   assert.match(stability,/maxLat:63\.87/);
   assert.match(stability,/minLon:20\.13/);
   assert.match(stability,/maxLon:20\.37/);
-  assert.match(stability,/E\.chooseStart/);
 });

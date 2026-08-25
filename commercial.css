@@ -21,7 +21,21 @@ body.game-live #leaderboardPanel{display:none}
 .account-message,.global-ranking-status{min-height:20px;margin-top:12px;color:#95a6b2;font-size:11px;line-height:1.45}.account-message.bad,.global-ranking-status.bad{color:var(--bad)}.account-message.good,.global-ranking-status.good{color:var(--good)}
 .ranking-modal-card{width:min(760px,100%)}.ranking-toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;margin:18px 0 10px}.ranking-toolbar .ghost{height:48px}.global-ranking-table{border:1px solid var(--line);border-radius:18px;overflow:hidden}.global-ranking-head,.global-ranking-row{display:grid;grid-template-columns:44px minmax(0,1fr) 76px 52px 52px;align-items:center;gap:8px;padding:11px 12px}.global-ranking-head{background:rgba(255,255,255,.035);color:#7f8f9b;font-size:9px;letter-spacing:.1em;font-weight:900}.global-ranking-row{border-top:1px solid var(--line);font-size:12px}.global-ranking-row strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.global-ranking-row .rank{color:var(--cyan);font-weight:950}.global-ranking-row .pts{color:var(--amber);font-weight:950}
 .city-modal-card{width:min(900px,100%)}.city-catalog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}.city-catalog-card{position:relative;padding:18px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.018));overflow:hidden}.city-catalog-card.active{border-color:rgba(104,243,223,.42);box-shadow:0 0 0 1px rgba(104,243,223,.12)}.city-catalog-card.locked{border-color:rgba(255,197,110,.18)}.city-catalog-card small{font-size:9px;color:#8494a0;letter-spacing:.12em;font-weight:900}.city-catalog-card h3{font-size:25px;margin:6px 0 5px}.city-catalog-card p{font-size:11px;color:#95a5b1;line-height:1.45;margin:0 0 14px}.city-catalog-card button{height:40px;border-radius:12px;padding:0 12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;font-weight:900;font-size:11px}.city-catalog-card.active button{color:var(--cyan);border-color:rgba(104,243,223,.28)}.city-catalog-card.locked button{color:var(--amber);border-color:rgba(255,197,110,.22)}
-@media(max-width:1050px){.city-storefront{grid-template-columns:1fr}.city-preview-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){.top-actions{gap:6px}.nav-ghost{display:none}.city-storefront{grid-template-columns:1fr}.city-preview-grid{grid-template-columns:1fr 1fr}.city-catalog-grid{grid-template-columns:1fr}.split-actions{grid-template-columns:1fr}.global-ranking-head,.global-ranking-row{grid-template-columns:34px minmax(0,1fr) 60px 40px 40px;padding:10px 9px}.city-storefront-copy h2{font-size:26px}}
 .section-cta{margin-top:14px}
-@media(max-width:760px){#accountBtn{display:inline-flex}.section-cta{width:100%}}
+
+/* Scroll safety: page and dialogs must always remain reachable on mobile. */
+html,body{height:auto!important;min-height:100%;overflow-x:hidden;overflow-y:auto!important;overscroll-behavior-y:auto}
+.app-shell,.content-shell{height:auto;overflow:visible!important}
+.modal{overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;align-items:start}
+.modal-card{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:auto}
+
+@media(max-width:1050px){.city-storefront{grid-template-columns:1fr}.city-preview-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){
+  .top-actions{gap:6px}.nav-ghost{display:none}.city-storefront{grid-template-columns:1fr}.city-preview-grid{grid-template-columns:1fr 1fr}.city-catalog-grid{grid-template-columns:1fr}.split-actions{grid-template-columns:1fr}.global-ranking-head,.global-ranking-row{grid-template-columns:34px minmax(0,1fr) 60px 40px 40px;padding:10px 9px}.city-storefront-copy h2{font-size:26px}
+  #accountBtn{display:inline-flex}.section-cta{width:100%}
+  #map{touch-action:pan-y pinch-zoom!important}
+  #map.map-explore-active{touch-action:none!important}
+  .map-card{touch-action:pan-y}
+  .modal{padding:12px;place-items:start center}
+  .modal-card{width:100%;max-height:calc(100dvh - 24px);margin:0 auto}
+}

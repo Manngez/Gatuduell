@@ -24,6 +24,11 @@
   function setMapExplore(v){
     S.mapExplore=!!v;if(!S.map)return;const desktop=innerWidth>720,active=desktop||S.mapExplore;
     ['dragging','touchZoom','doubleClickZoom'].forEach(k=>S.map[k]?.[active?'enable':'disable']());S.map.scrollWheelZoom.disable();
+    const mapEl=$('map');
+    if(mapEl){
+      mapEl.classList.toggle('map-explore-active',!desktop&&S.mapExplore);
+      mapEl.style.touchAction=desktop?'auto':S.mapExplore?'none':'pan-y pinch-zoom';
+    }
     const b=$('mapModeBtn');if(b){b.hidden=desktop;b.setAttribute('aria-pressed',String(!desktop&&S.mapExplore));b.textContent=!desktop&&S.mapExplore?'Lås kartan':'Utforska kartan'}
   }
   function cityUI(){

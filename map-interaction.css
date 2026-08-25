@@ -1,9 +1,19 @@
 /* Match map interaction overrides. In active game mode the map is always the primary control surface. */
+body.game-live,
+body.game-live .content-shell,
+body.game-live .stage-grid,
+body.game-live .map-card,
+body.game-live #map{
+  height:100svh!important;
+  min-height:100svh!important;
+}
 body.game-live #map,
 body.game-live .leaflet-container{
   touch-action:none!important;
   overscroll-behavior:none!important;
   cursor:grab;
+  user-select:none!important;
+  -webkit-user-select:none!important;
 }
 body.game-live #map:active,
 body.game-live .leaflet-container:active{cursor:grabbing}
@@ -11,6 +21,7 @@ body.game-live .map-tools{display:none!important}
 body.game-live .challenge-card{pointer-events:none}
 body.game-live .leaflet-control-zoom,
 body.game-live .control-card{pointer-events:auto}
+body.game-live .leaflet-tile-pane{will-change:transform}
 @media(max-width:760px){
   body.game-live #map,
   body.game-live .map-card{touch-action:none!important}

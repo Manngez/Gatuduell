@@ -20,6 +20,13 @@ test('aktuell gata rödmarkeras',()=>{
   assert.match(html,/AKTUELL GATA · RÖDMARKERAD/);
 });
 
+test('mobilkartan använder en enda stabil tilevärd',()=>{
+  assert.match(app,/https:\/\/basemaps\.cartocdn\.com\/light_nolabels/);
+  assert.doesNotMatch(app,/\{s\}\.basemaps\.cartocdn\.com/);
+  assert.match(app,/tileSize:256/);
+  assert.match(app,/detectRetina:false/);
+});
+
 test('online använder värdcentrerad PeerJS och auktoritativ flyttvalidering',()=>{
   assert.match(app,/peerjs@1\.5\.5/);
   assert.match(app,/roomPeerId/);

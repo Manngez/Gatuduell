@@ -1,6 +1,9 @@
 .game-screen,.map,.leaflet-container{background:#f5f7f8!important}
 #map.leaflet-container{touch-action:none!important;overscroll-behavior:none!important;user-select:none!important;-webkit-user-select:none!important}
-#map .leaflet-map-pane,#map .leaflet-zoom-animated{will-change:transform}
+#map .leaflet-pane,#map .leaflet-tile,#map .leaflet-marker-icon,#map .leaflet-marker-shadow,#map .leaflet-tile-container,#map .leaflet-pane>svg,#map .leaflet-pane>canvas{position:absolute;left:0;top:0}
+#map .leaflet-map-pane,#map .leaflet-tile-pane,#map .leaflet-tile-container{width:100%;height:100%}
+#map .leaflet-tile{width:256px;height:256px;margin:0;padding:0;border:0;max-width:none!important;max-height:none!important;pointer-events:none}
+#map .leaflet-map-pane{will-change:transform}
 #map .leaflet-streetRoute-pane{pointer-events:none!important}
 #map .leaflet-control-attribution{background:rgba(255,255,255,.78)!important;color:#65737c!important;border-radius:8px 0 0 0;padding:3px 6px!important;font-size:8px!important}
 #map .leaflet-control-attribution a{color:#65737c!important}

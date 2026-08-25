@@ -16,8 +16,8 @@
   L.map=function createStableMap(id,options={}){
     const map=originalMap(id,{
       ...options,
-      inertia:true,
-      touchZoom:true,
+      inertia:false,
+      touchZoom:'center',
       zoomSnap:0,
       zoomDelta:.25,
       zoomAnimation:true,

@@ -21,9 +21,9 @@ test('valda och aktuella gator ritas tydligt över baskartan',()=>{
 });
 
 test('mobilkartan är användarstyrd och pinch-stabil',()=>{
-  assert.match(map,/touchZoom:true/);
+  assert.match(map,/touchZoom:'center'/);
   assert.match(map,/zoomSnap:0/);
-  assert.match(map,/inertia:true/);
+  assert.match(map,/inertia:false/);
   assert.match(map,/zoomAnimation:true/);
   assert.match(map,/manualFocusUntil/);
   assert.match(map,/#recenterBtn/);

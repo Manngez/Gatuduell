@@ -9,27 +9,61 @@
   const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const premium=()=>!!S.profile?.is_premium,locked=c=>!!c?.premium&&!premium(),level=()=>LEVELS[S.state?.difficulty||$('difficultySelect')?.value]||LEVELS.hard;
   const open=id=>{$(id)?.classList.remove('hidden');$(id)?.setAttribute('aria-hidden','false')},close=id=>{$(id)?.classList.add('hidden');$(id)?.setAttribute('aria-hidden','true')};
-  const live=v=>document.body.classList.toggle('game-live',!!v);
+  const live=v=>{
+    const active=!!v;
+    document.body.classList.toggle('game-live',active);
+    if(S.map){
+      setMapExplore(active);
+      requestAnimationFrame(()=>S.map.invalidateSize(false));
+      setTimeout(()=>S.map?.invalidateSize(false),120);
+    }
+  };
 
   function initMap(){
     if(!window.L)return;
-    S.map=L.map('map',{zoomControl:false,minZoom:10,maxZoom:19,scrollWheelZoom:false}).setView(S.city.center,S.city.zoom||13);
+    S.map=L.map('map',{
+      zoomControl:false,
+      minZoom:10,
+      maxZoom:19,
+      scrollWheelZoom:false,
+      dragging:true,
+      touchZoom:true,
+      doubleClickZoom:true,
+      zoomAnimation:true,
+      fadeAnimation:true,
+      markerZoomAnimation:true
+    }).setView(S.city.center,S.city.zoom||13);
     L.control.zoom({position:'bottomright'}).addTo(S.map);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:20,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(S.map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{
+      maxZoom:20,
+      attribution:'&copy; OpenStreetMap &copy; CARTO',
+      updateWhenIdle:false,
+      keepBuffer:4
+    }).addTo(S.map);
     setMapExplore(false);
     window.addEventListener('resize',()=>{setMapExplore(false);S.map.invalidateSize(false)});
     window.addEventListener('orientationchange',()=>{setMapExplore(false);S.map.invalidateSize(false)});
     if('ResizeObserver'in window)new ResizeObserver(()=>S.map.invalidateSize(false)).observe($('map'));
   }
   function setMapExplore(v){
-    S.mapExplore=!!v;if(!S.map)return;const desktop=innerWidth>720,active=desktop||S.mapExplore;
-    ['dragging','touchZoom','doubleClickZoom'].forEach(k=>S.map[k]?.[active?'enable':'disable']());S.map.scrollWheelZoom.disable();
+    S.mapExplore=!!v;
+    if(!S.map)return;
+    const desktop=innerWidth>720;
+    const inGame=document.body.classList.contains('game-live');
+    const active=inGame||desktop||S.mapExplore;
+    ['dragging','touchZoom','doubleClickZoom','boxZoom','keyboard'].forEach(k=>S.map[k]?.[active?'enable':'disable']());
+    desktop?S.map.scrollWheelZoom.enable():S.map.scrollWheelZoom.disable();
     const mapEl=$('map');
     if(mapEl){
-      mapEl.classList.toggle('map-explore-active',!desktop&&S.mapExplore);
-      mapEl.style.touchAction=desktop?'auto':S.mapExplore?'none':'pan-y pinch-zoom';
+      mapEl.classList.toggle('map-explore-active',!desktop&&active);
+      mapEl.style.touchAction=active?'none':'pan-y pinch-zoom';
     }
-    const b=$('mapModeBtn');if(b){b.hidden=desktop;b.setAttribute('aria-pressed',String(!desktop&&S.mapExplore));b.textContent=!desktop&&S.mapExplore?'Lås kartan':'Utforska kartan'}
+    const b=$('mapModeBtn');
+    if(b){
+      b.hidden=desktop||inGame;
+      b.setAttribute('aria-pressed',String(!desktop&&!inGame&&S.mapExplore));
+      b.textContent=!desktop&&!inGame&&S.mapExplore?'Lås kartan':'Utforska kartan';
+    }
   }
   function cityUI(){
     $('cityChipName')&&($('cityChipName').textContent=S.city.name);$('citySelect')&&($('citySelect').value=S.city.slug);document.title=`Gatduell ${S.city.name}`;$('map')?.setAttribute('aria-label',`Karta över ${S.city.name}`);

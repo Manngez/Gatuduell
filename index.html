@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07131d">
   <title>Gatduell Umeå</title>
-  <meta name="description" content="Gatduell Umeå – två spelare, riktiga gatukorsningar och Umeås gatunät.">
+  <meta name="description" content="Gatduell Umeå – lokalt eller online med riktiga gatukorsningar i Umeå.">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://a.basemaps.cartocdn.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynHTNCwAKQ9sSQRHCHk8Fccsq0Zk=" crossorigin="">
   <link rel="stylesheet" href="styles.css?v=20260825-clean2">
   <link rel="stylesheet" href="result-ui.css?v=20260825-result1">
+  <link rel="stylesheet" href="online.css?v=20260825-online1">
 </head>
 <body>
   <main id="setupScreen" class="setup-screen">
@@ -18,7 +19,7 @@
       <div class="brand-mark">G</div>
       <p class="eyebrow">GATDUELL · UMEÅ</p>
       <h1>Vem kan Umeås gator bäst?</h1>
-      <p class="lead">Turas om att skriva gator som ligger rätt från den aktuella gatan. Fel svar förlorar rundan. Först till tre rundvinster vinner.</p>
+      <p class="lead">Turas om att skriva gator som ligger rätt från den aktuella gatan. Spela på samma enhet eller skapa ett onlinerum.</p>
 
       <div class="setup-grid">
         <label>Spelare 1<input id="name1" maxlength="24" value="Spelare 1"></label>
@@ -43,7 +44,10 @@
         </label>
       </div>
 
-      <button id="startBtn" class="start-button" disabled>Laddar Umeås gator…</button>
+      <div class="start-actions">
+        <button id="startBtn" class="start-button" disabled>Laddar Umeås gator…</button>
+        <button id="onlineBtn" class="online-button" disabled>Spela online</button>
+      </div>
       <p id="loadStatus" class="load-status">Hämtar gatunät från Umeå Open Data / NVDB…</p>
     </section>
   </main>
@@ -58,17 +62,18 @@
     </section>
 
     <section class="street-hud">
-      <small>AKTUELL GATA</small>
+      <small>AKTUELL GATA · RÖDMARKERAD</small>
       <strong id="currentStreet">—</strong>
       <div class="street-meta"><span id="difficultyBadge"></span><span id="timerText"></span></div>
       <div id="timerTrack" class="timer-track"><i id="timerBar"></i></div>
     </section>
 
+    <div id="mapHint" class="map-hint">Dra eller nyp fritt · automatisk följning pausar när du navigerar</div>
     <button id="recenterBtn" class="map-button" type="button" aria-label="Visa aktuell gata">◎</button>
     <button id="newMatchBtn" class="new-match" type="button">Ny match</button>
 
     <section class="composer">
-      <div id="message" class="message">Skriv en gata som ligger rätt från den aktuella gatan.</div>
+      <div id="message" class="message">Skriv en gata som ligger rätt från den röda gatan.</div>
       <div id="pathHint" class="path-hint" hidden></div>
       <div id="suggestions" class="suggestions"></div>
       <form id="answerForm" autocomplete="off">
@@ -88,9 +93,41 @@
     </div>
   </div>
 
+  <div id="onlineModal" class="modal online-modal" hidden>
+    <section class="online-card">
+      <button id="onlineClose" class="online-close" type="button" aria-label="Stäng">×</button>
+      <p class="eyebrow">GATDUELL ONLINE</p>
+      <h2>Spela på två enheter</h2>
+      <p class="online-intro">En spelare skapar ett rum. Den andra ansluter med rumskoden. Spelledaren validerar alla svar och synkar matchen.</p>
+
+      <label class="online-field">Ditt namn<input id="onlineName" maxlength="24" value="Spelare"></label>
+      <div class="online-columns">
+        <section>
+          <strong>Skapa rum</strong>
+          <label class="online-field">Rumskod<input id="roomCodeCreate" maxlength="6" autocapitalize="characters"></label>
+          <button id="createRoomBtn" class="start-button" type="button">Skapa rum</button>
+        </section>
+        <section>
+          <strong>Anslut</strong>
+          <label class="online-field">Rumskod<input id="roomCodeJoin" maxlength="6" autocapitalize="characters" inputmode="text"></label>
+          <button id="joinRoomBtn" class="online-button" type="button">Anslut</button>
+        </section>
+      </div>
+
+      <div class="online-live">
+        <span id="onlineStatus">Inte ansluten</span>
+        <strong id="onlineRoomLive"></strong>
+        <small id="onlineGuestLive"></small>
+        <div id="onlineError" class="online-error"></div>
+      </div>
+      <button id="onlineStartGame" class="start-button" type="button" hidden disabled>Starta onlinematch</button>
+      <button id="leaveOnlineBtn" class="online-leave" type="button" hidden>Lämna rummet</button>
+      <p class="online-note">Direktanslutning via WebRTC/PeerJS. Om ett nätverk blockerar direktanslutning kan TURN behöva konfigureras.</p>
+    </section>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="engine.js?v=20260825-clean1"></script>
-  <script src="app.js?v=20260825-clean2"></script>
-  <script src="result-ui.js?v=20260825-result1"></script>
+  <script src="app.js?v=20260825-online1"></script>
 </body>
 </html>

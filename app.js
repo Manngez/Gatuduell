@@ -58,8 +58,11 @@
       inertia:true,preferCanvas:true,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:false,
       boxZoom:false,keyboard:false,worldCopyJump:false
     }).setView(CENTER,13);
+    const routePane=map.createPane('streetRoutePane');
+    routePane.style.zIndex='650';
+    routePane.style.pointerEvents='none';
     L.tileLayer('https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
-      tileSize:256,detectRetina:false,maxZoom:20,updateWhenZooming:false,updateWhenIdle:true,keepBuffer:4,
+      tileSize:256,detectRetina:false,maxZoom:20,
       attribution:'&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
     routeLayer=L.layerGroup().addTo(map);

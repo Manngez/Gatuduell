@@ -7,9 +7,8 @@
   <title>Gatduell Umeå</title>
   <meta name="description" content="Gatduell Umeå – utmana en vän i lokalkännedom och hitta gator som hänger ihop.">
   <link rel="preconnect" href="https://unpkg.com">
-  <link rel="preconnect" href="https://a.basemaps.cartocdn.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynHTNCwAKQ9sSQRHCHk8Fccsq0Zk=" crossorigin="">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://tiles.openfreemap.org">
+  <link rel="stylesheet" href="styles.css?v=20260825-maplibre1">
 </head>
 <body>
   <main class="app-shell">
@@ -68,29 +67,13 @@
       </section>
 
       <section id="howItWorks" class="promo-grid" aria-label="Fördelar och spelupplägg">
-        <article class="promo-card">
-          <div class="promo-icon">⚡</div>
-          <strong>Explosiv spelkänsla</strong>
-          <p>Varje runda känns direkt. Du fattar reglerna på några sekunder men vill spela om och om igen.</p>
-        </article>
-        <article class="promo-card">
-          <div class="promo-icon">🧠</div>
-          <strong>Lokalkännedom på riktigt</strong>
-          <p>Det räcker inte att känna igen ett namn. Du måste förstå hur Umeås gator faktiskt hänger ihop.</p>
-        </article>
-        <article class="promo-card">
-          <div class="promo-icon">🏆</div>
-          <strong>Perfekt för premiumifiering</strong>
-          <p>Fler städer, online-ligor, dagliga utmaningar och topplistor ligger naturligt nästa i utvecklingen.</p>
-        </article>
+        <article class="promo-card"><div class="promo-icon">⚡</div><strong>Explosiv spelkänsla</strong><p>Varje runda känns direkt. Du fattar reglerna på några sekunder men vill spela om och om igen.</p></article>
+        <article class="promo-card"><div class="promo-icon">🧠</div><strong>Lokalkännedom på riktigt</strong><p>Det räcker inte att känna igen ett namn. Du måste förstå hur Umeås gator faktiskt hänger ihop.</p></article>
+        <article class="promo-card"><div class="promo-icon">🏆</div><strong>Perfekt för premiumifiering</strong><p>Fler städer, online-ligor, dagliga utmaningar och topplistor ligger naturligt nästa i utvecklingen.</p></article>
       </section>
 
       <section class="how-strip" aria-label="Så fungerar spelet">
-        <div class="how-intro">
-          <div class="eyebrow">SÅ HÄR SPELAR NI</div>
-          <h2>Tre steg till en riktigt bra duell</h2>
-          <p>Det ska vara glasklart varför någon vill spela — och lika glasklart hur man kommer igång.</p>
-        </div>
+        <div class="how-intro"><div class="eyebrow">SÅ HÄR SPELAR NI</div><h2>Tre steg till en riktigt bra duell</h2><p>Det ska vara glasklart varför någon vill spela — och lika glasklart hur man kommer igång.</p></div>
         <div class="how-steps">
           <article><span>1</span><strong>Välj namn och nivå</strong><p>Ställ in spelare, svårighetsgrad och tid. Sedan startar matchen direkt.</p></article>
           <article><span>2</span><strong>Svara innan tiden går ut</strong><p>Skriv en giltig gata som ligger rätt från den aktuella gatan.</p></article>
@@ -99,26 +82,12 @@
       </section>
 
       <section id="leaderboardPanel" class="leaderboard-panel" aria-label="Hall of Fame">
-        <div class="leaderboard-copy">
-          <div class="eyebrow">HALL OF FAME</div>
-          <h2>Vem äger Umeå?</h2>
-          <p>Lokala vinster sparas på enheten. Med Gatduell ID kopplas Spelare 1 dessutom till global ranking per stad.</p>
-          <button id="globalRankingCta" class="ghost section-cta" type="button">Öppna global ranking</button>
-        </div>
-        <div class="leaderboard-card">
-          <div class="leaderboard-head"><span>Spelare</span><span>Vinster</span><span>Matcher</span><span>Vinst %</span></div>
-          <div id="leaderboardRows" class="leaderboard-rows"></div>
-          <div id="leaderboardEmpty" class="leaderboard-empty">Ingen har tagit en seger ännu. Första matchen sätter ribban.</div>
-        </div>
+        <div class="leaderboard-copy"><div class="eyebrow">HALL OF FAME</div><h2>Vem äger Umeå?</h2><p>Lokala vinster sparas på enheten. Med Gatduell ID kopplas Spelare 1 dessutom till global ranking per stad.</p><button id="globalRankingCta" class="ghost section-cta" type="button">Öppna global ranking</button></div>
+        <div class="leaderboard-card"><div class="leaderboard-head"><span>Spelare</span><span>Vinster</span><span>Matcher</span><span>Vinst %</span></div><div id="leaderboardRows" class="leaderboard-rows"></div><div id="leaderboardEmpty" class="leaderboard-empty">Ingen har tagit en seger ännu. Första matchen sätter ribban.</div></div>
       </section>
 
       <section class="city-storefront" aria-label="Städer i Gatduell">
-        <div class="city-storefront-copy">
-          <div class="eyebrow">GATDUELL CITIES</div>
-          <h2>En spelmotor. Flera städer.</h2>
-          <p>Umeå ingår. Premiumkonton låser upp Stockholm, Göteborg och Malmö — samma duellidé, helt nya gatunät.</p>
-          <button id="cityCatalogCta" class="ghost section-cta" type="button">Utforska alla städer</button>
-        </div>
+        <div class="city-storefront-copy"><div class="eyebrow">GATDUELL CITIES</div><h2>En spelmotor. Flera städer.</h2><p>Umeå ingår. Premiumkonton låser upp Stockholm, Göteborg och Malmö — samma duellidé, helt nya gatunät.</p><button id="cityCatalogCta" class="ghost section-cta" type="button">Utforska alla städer</button></div>
         <div id="cityPreviewGrid" class="city-preview-grid"></div>
       </section>
 
@@ -193,7 +162,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script><script src="cities.js"></script><script src="backend.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="engine.js"></script><script src="app.js"></script>
+  <script src="engine.js"></script><script src="app.js?v=20260825-maplibre1"></script>
 </body>
 </html>

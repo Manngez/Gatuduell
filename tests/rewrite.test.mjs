@@ -22,7 +22,7 @@ test('Leaflet-kartan följer Orten 2.0-principen och återanvänds',()=>{
 });
 
 test('aktuell gata är röd och tidigare valda gator markeras separat',()=>{
-  assert.match(app,/state\.used\.slice\(0,-1\)/);
+  assert.match(app,/state\.usedStreets\.slice\(0,-1\)/);
   assert.match(app,/color:'#7b8791'/);
   assert.match(app,/color:'#e53935'/);
   assert.match(html,/AKTUELL GATA · RÖDMARKERAD/);

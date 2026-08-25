@@ -1,10 +1,12 @@
 'use strict';
 
 (() => {
-  const css=document.createElement('link');
-  css.rel='stylesheet';
-  css.href='commercial.css';
-  document.head.appendChild(css);
+  for(const href of ['commercial.css','fullscreen-game.css']){
+    const css=document.createElement('link');
+    css.rel='stylesheet';
+    css.href=href;
+    document.head.appendChild(css);
+  }
 
   const files=['app-state.js','app-online.js','app-game.js'];
   const load=index=>{

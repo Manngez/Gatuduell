@@ -15,7 +15,7 @@
     if(!window.L)return;
     S.map=L.map('map',{zoomControl:false,minZoom:10,maxZoom:19,scrollWheelZoom:false}).setView(S.city.center,S.city.zoom||13);
     L.control.zoom({position:'bottomright'}).addTo(S.map);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:20,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(S.map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:20,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(S.map);
     setMapExplore(false);
     window.addEventListener('resize',()=>{setMapExplore(false);S.map.invalidateSize(false)});
     window.addEventListener('orientationchange',()=>{setMapExplore(false);S.map.invalidateSize(false)});

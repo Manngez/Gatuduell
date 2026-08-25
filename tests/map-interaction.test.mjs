@@ -16,3 +16,10 @@ test('mobilkartan tar touch i aktiv match',()=>{
   assert.match(css,/touch-action:none!important/);
   assert.match(css,/\.map-tools\{display:none!important\}/);
 });
+
+test('fullskärmsbyte ritar om ett enda tilelager efter resize',()=>{
+  assert.match(state,/S\.baseLayer=.*L\.tileLayer/);
+  assert.match(state,/rastertiles\/light_nolabels/);
+  assert.match(state,/S\.baseLayer\.redraw\(\)/);
+  assert.doesNotMatch(state,/new ResizeObserver/);
+});

@@ -7,6 +7,7 @@
   const CENTRAL={minLat:63.78,maxLat:63.87,minLon:20.13,maxLon:20.37};
   const originalBuildGraph=E.buildGraph.bind(E);
   const originalMap=L.map.bind(L);
+  const originalPolyline=L.polyline.bind(L);
   const originalFlyToBounds=L.Map.prototype.flyToBounds;
   let graph=null;
   let manualFocusUntil=0;
@@ -21,12 +22,21 @@
       ...options,
       preferCanvas:true,
       inertia:false,
-      touchZoom:'center',
-      zoomAnimation:false,
+      touchZoom:true,
+      zoomSnap:0,
+      zoomDelta:.25,
+      zoomAnimation:true,
       fadeAnimation:false,
       markerZoomAnimation:false,
       bounceAtZoomLimits:false
     });
+
+    if(!map.getPane('streetRoutePane')){
+      const routePane=map.createPane('streetRoutePane');
+      routePane.style.zIndex='650';
+      routePane.style.pointerEvents='none';
+    }
+
     map.whenReady(()=>{
       map.dragging.enable();
       map.touchZoom.enable();
@@ -40,6 +50,22 @@
         .addTo(map);
     });
     return map;
+  };
+
+  // Alla spelade gator läggs i ett eget översta lager så att de alltid syns.
+  // Tidigare val blir röda; den aktuella gatan får en vit kant och starkare röd kärna.
+  L.polyline=function createGamePolyline(latlngs,options={}){
+    const color=String(options?.color||'').toLowerCase();
+    const isPrevious=color==='#7b8791';
+    const isCurrentOutline=color==='#ffffff';
+    const isCurrent=color==='#e53935';
+    if(!isPrevious&&!isCurrentOutline&&!isCurrent) return originalPolyline(latlngs,options);
+
+    const styled={...options,pane:'streetRoutePane'};
+    if(isPrevious) Object.assign(styled,{color:'#e53935',weight:5,opacity:.72});
+    if(isCurrentOutline) Object.assign(styled,{color:'#ffffff',weight:13,opacity:.98});
+    if(isCurrent) Object.assign(styled,{color:'#d91f1f',weight:8,opacity:1});
+    return originalPolyline(latlngs,styled);
   };
 
   // Appen anropar L.tileLayer, men vi returnerar i stället ett enda vektorlager

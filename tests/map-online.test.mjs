@@ -20,11 +20,24 @@ test('aktuell gata rödmarkeras',()=>{
   assert.match(html,/AKTUELL GATA · RÖDMARKERAD/);
 });
 
-test('online använder PeerJS och host-auktoritativ flyttvalidering',()=>{
+test('online använder värdcentrerad PeerJS och auktoritativ flyttvalidering',()=>{
   assert.match(app,/peerjs@1\.5\.5/);
   assert.match(app,/roomPeerId/);
-  assert.match(app,/msg\?\.type==='move'&&state\?\.running&&state\.turn===1/);
+  assert.match(app,/connections:new Map\(\)/);
+  assert.match(app,/msg\?\.type==='move'&&id===state\.currentPlayer/);
+  assert.match(app,/msg\.revision===state\.revision/);
   assert.match(app,/processMove\(String\(msg\.raw\|\|''\)\)/);
   assert.match(html,/Skapa rum/);
   assert.match(html,/Anslut/);
+});
+
+test('online stöder lobby, tio enheter och revisionsskydd',()=>{
+  assert.match(app,/length>=10/);
+  assert.match(app,/Rummet är fullt · max 10 deltagare/);
+  assert.match(app,/revision:0/);
+  assert.match(app,/remote\.revision<=state\.revision/);
+  assert.match(app,/crypto\.randomUUID\(\)/);
+  assert.match(app,/type:'ping'/);
+  assert.match(html,/Jag är spelledare/);
+  assert.match(html,/Jag deltar också/);
 });

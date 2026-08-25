@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles.css?v=20260825-clean2">
   <link rel="stylesheet" href="result-ui.css?v=20260825-result1">
   <link rel="stylesheet" href="online.css?v=20260825-online1">
+  <link rel="stylesheet" href="online-v2.css?v=20260825-online10">
   <link rel="stylesheet" href="vector-map.css?v=20260825-vector2">
 </head>
 <body>
@@ -56,9 +57,8 @@
     <div id="map" class="map" aria-label="Karta över Umeå"></div>
 
     <section class="score-hud" aria-label="Matchstatus">
-      <div id="p1" class="player active"><span id="p1Name">Spelare 1</span><b id="p1Score">0</b></div>
+      <div id="playerStrip" class="player-strip"></div>
       <div class="round"><small>RUNDA</small><strong id="roundNo">1</strong></div>
-      <div id="p2" class="player"><span id="p2Name">Spelare 2</span><b id="p2Score">0</b></div>
     </section>
 
     <section class="street-hud">
@@ -71,6 +71,16 @@
     <div id="mapHint" class="map-hint">Dra eller nyp fritt</div>
     <button id="recenterBtn" class="map-button" type="button" aria-label="Visa aktuell gata">◎</button>
     <button id="newMatchBtn" class="new-match" type="button">Ny match</button>
+
+    <aside id="hostPanel" class="host-panel" hidden>
+      <button id="hostPanelToggle" type="button">VÄRDKONTROLLER</button>
+      <div id="hostPanelBody" hidden>
+        <button data-host-action="pause">Pausa</button><button data-host-action="resume">Återuppta</button>
+        <button data-host-action="skip">Hoppa över</button><button data-host-action="end-round">Avsluta runda</button>
+        <button data-host-action="restart">Starta om match</button>
+        <div id="hostAnswers" class="host-answers"></div>
+      </div>
+    </aside>
 
     <section class="composer">
       <div id="message" class="message">Skriv en gata som ligger rätt från den röda gatan.</div>
@@ -97,14 +107,16 @@
     <section class="online-card">
       <button id="onlineClose" class="online-close" type="button" aria-label="Stäng">×</button>
       <p class="eyebrow">GATDUELL ONLINE</p>
-      <h2>Spela på två enheter</h2>
-      <p class="online-intro">En spelare skapar ett rum. Den andra ansluter med rumskoden. Spelledaren validerar alla svar och synkar matchen.</p>
+      <h2>Spela online</h2>
+      <p class="online-intro">Skapa ett rum eller anslut med en femteckenskod. Upp till 10 enheter kan delta.</p>
 
       <label class="online-field">Ditt namn<input id="onlineName" maxlength="24" value="Spelare"></label>
       <div class="online-columns">
         <section>
           <strong>Skapa rum</strong>
           <label class="online-field">Rumskod<input id="roomCodeCreate" maxlength="6" autocapitalize="characters"></label>
+          <label class="role-choice"><input type="radio" name="hostRole" value="master" checked> Jag är spelledare</label>
+          <label class="role-choice"><input type="radio" name="hostRole" value="player"> Jag deltar också</label>
           <button id="createRoomBtn" class="start-button" type="button">Skapa rum</button>
         </section>
         <section>
@@ -118,11 +130,17 @@
         <span id="onlineStatus">Inte ansluten</span>
         <strong id="onlineRoomLive"></strong>
         <small id="onlineGuestLive"></small>
+        <ol id="lobbyPlayers" class="lobby-players"></ol>
+        <strong id="lobbyCount" class="lobby-count"></strong>
         <div id="onlineError" class="online-error"></div>
       </div>
-      <button id="onlineStartGame" class="start-button" type="button" hidden disabled>Starta onlinematch</button>
+      <div id="lobbySettings" class="lobby-settings" hidden>
+        <label class="online-field">Svårighetsgrad<select id="onlineDifficulty"><option value="hard">Hard · direkt</option><option value="medium">Medium · 2 steg</option><option value="easy">Easy · 3 steg</option></select></label>
+        <label class="online-field">Tid per tur<select id="onlineSeconds"><option value="0">Ingen tidsgräns</option><option value="10">10 sek</option><option value="20" selected>20 sek</option><option value="30">30 sek</option><option value="60">60 sek</option></select></label>
+      </div>
+      <button id="onlineStartGame" class="start-button" type="button" hidden disabled>Starta match</button>
       <button id="leaveOnlineBtn" class="online-leave" type="button" hidden>Lämna rummet</button>
-      <p class="online-note">Direktanslutning via WebRTC/PeerJS. Om ett nätverk blockerar direktanslutning kan TURN behöva konfigureras.</p>
+      <p class="online-note">Värden validerar spelet och synkroniserar samma matchläge till alla enheter.</p>
     </section>
   </div>
 

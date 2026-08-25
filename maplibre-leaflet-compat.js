@@ -59,7 +59,9 @@
       try{
         const style=this._map.getStyle();
         for(const layer of style?.layers||[]){
-          if(layer.type==='symbol') this._map.setLayoutProperty(layer.id,'visibility','none');
+          if(layer.type==='symbol' && this._map.getLayoutProperty(layer.id,'visibility')!=='none'){
+            this._map.setLayoutProperty(layer.id,'visibility','none');
+          }
         }
       }catch{}
     }
@@ -105,7 +107,6 @@
           if(!grouped.has(key)) grouped.set(key,{style:s,features:[]});
           grouped.get(key).features.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:line.latlngs.map(([lat,lon])=>[lon,lat])}});
         }
-        let z=0;
         for(const {style,features} of grouped.values()){
           const sourceId=`gd-src-${++groupSeq}`;
           const layerId=`gd-line-${groupSeq}`;
@@ -121,7 +122,7 @@
               'line-opacity':style.opacity??1
             }
           });
-          this.ids.push({layerId,sourceId,z:z++});
+          this.ids.push({layerId,sourceId});
         }
       });
       return this;

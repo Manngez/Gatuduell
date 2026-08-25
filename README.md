@@ -1,36 +1,40 @@
-# Gatduell
+# Gatduell Umeå
 
-Gatduell är ett snabbt lokalkännedomsspel där två spelare turas om att ange gator som hänger ihop. Umeå ingår gratis och arkitekturen stödjer premiumstäder, konto och global ranking.
+En fristående Gatduell byggd från grunden med den fungerande gatlogiken från Orten 2.0 som grund.
 
-## Spelfunktioner
+## Spelet
 
+- Endast Umeå
 - 2 spelare på samma enhet
-- först till 3 rundvinster
+- Först till 3 rundvinster
 - Hard: direkt anslutande gata
 - Medium: högst 2 steg
 - Easy: högst 3 steg
-- valbar tidsgräns
-- karta som följer aktuell gata
-- lokal Hall of Fame och delningsbara resultat
+- Valbar tidsgräns: av, 10, 15, 20, 30, 45 eller 60 sekunder
+- Umeås gatunät hämtas från Umeå Open Data / NVDB
+- Rondeller och små trafiköar hanteras av samma gatgraf-princip som i Orten 2.0
 
-## Gatduell Cities
+## Kartan
 
-- Umeå — gratis, Umeå kommuns/NVDB:s öppna data
-- Stockholm — Premium, OpenStreetMap via Overpass
-- Göteborg — Premium, OpenStreetMap via Overpass
-- Malmö — Premium, OpenStreetMap via Overpass
+Leaflet används direkt utan adapterlager. Kartan skapas först när en match startar och skapas då redan i fullskärmsläget.
 
-## Konto, ranking och Premium
+- Ett finger: panorera
+- Två fingrar: pinch-zoom
+- Tidigare spelade gator: turkos
+- Aktuell gata: orange med vit kant
+- Svarsfältet ligger alltid i nederkant
+- Knappen ◎ centrerar åter på aktuell gata
 
-Frontendlagret finns i `backend.js`. Utan backend fungerar spelet fortfarande i gästläge. För att aktivera konto och global ranking:
+## Arkitektur
 
-1. Skapa ett Supabase-projekt.
-2. Kör `supabase/schema.sql`.
-3. Lägg projektets URL och publishable/anon key i `config.js`.
-4. Lägg GitHub Pages-adressen som Auth Site URL/Redirect URL i Supabase.
-5. Koppla en betrodd checkout/webhook som sätter `profiles.is_premium=true` och lägg checkout-länken i `config.js`.
+Den körande appen består av:
 
-**Lägg aldrig en Supabase service-role key i GitHub Pages eller annan frontendkod.**
+- `index.html`
+- `styles.css`
+- `engine.js`
+- `app.js`
+
+Gamla konto-, ranking-, premium-, flerstads- och MapLibre-lager är borttagna.
 
 ## Test
 
@@ -39,4 +43,4 @@ npm test
 npm run check
 ```
 
-Testerna omfattar gatkorsningar, rondellfallet Hissjövägen ↔ Östra Kyrkogatan, svårighetsgrader samt stadskatalog/Overpass-konvertering.
+Testerna omfattar bland annat direkta gatukorsningar, rondellfallet Hissjövägen ↔ Östra Kyrkogatan, svårighetsgrader och att den rena appen inte återinför gamla sidomoduler.

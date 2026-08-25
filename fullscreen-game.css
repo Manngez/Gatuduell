@@ -1,0 +1,276 @@
+/* Fullscreen game mode: map first, controls always visible. */
+body.game-live{
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  background:#eef2f3!important;
+}
+body.game-live .topbar,
+body.game-live .footer-note{display:none!important}
+body.game-live .content-shell{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  width:100vw;
+  max-width:none;
+  height:100dvh;
+  margin:0;
+  padding:0;
+  overflow:hidden!important;
+}
+body.game-live .stage-grid{
+  position:fixed;
+  inset:0;
+  display:block!important;
+  width:100vw;
+  height:100dvh;
+  margin:0;
+  z-index:1;
+}
+body.game-live .map-card{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100dvh;
+  min-height:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:#eef2f3!important;
+}
+body.game-live #map{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:#eef2f3!important;
+}
+body.game-live .map-card::after{
+  background:linear-gradient(180deg,rgba(255,255,255,.08) 0%,transparent 22%,transparent 66%,rgba(20,35,43,.14) 100%)!important;
+  box-shadow:none!important;
+}
+body.game-live .leaflet-control-attribution{
+  background:rgba(255,255,255,.78)!important;
+  color:#53616a!important;
+}
+body.game-live .leaflet-control-attribution a{color:#3c6c75!important}
+body.game-live .leaflet-control-zoom a{
+  background:rgba(255,255,255,.92)!important;
+  color:#18313a!important;
+  border-color:rgba(28,57,66,.12)!important;
+}
+
+/* Compact match HUD floating above the map. */
+body.game-live .match-strip{
+  position:fixed;
+  top:max(10px,env(safe-area-inset-top));
+  left:50%;
+  transform:translateX(-50%);
+  z-index:2200;
+  width:min(760px,calc(100vw - 24px));
+  margin:0;
+  grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr)!important;
+  gap:8px;
+  pointer-events:none;
+}
+body.game-live .player-card,
+body.game-live .match-center{
+  min-height:48px!important;
+  border-radius:15px!important;
+  background:rgba(255,255,255,.9)!important;
+  border:1px solid rgba(34,66,76,.12)!important;
+  box-shadow:0 8px 24px rgba(32,50,60,.12)!important;
+  color:#17262d!important;
+  backdrop-filter:blur(14px);
+}
+body.game-live .player-card{padding:8px 11px!important}
+body.game-live .player-copy small,
+body.game-live .match-center small,
+body.game-live .match-center span{color:#667983!important}
+body.game-live .player-copy strong,
+body.game-live .match-center strong,
+body.game-live .player-card b{color:#16262e!important}
+body.game-live .player-card.active{border-color:rgba(40,180,164,.5)!important}
+
+/* Current street HUD. */
+body.game-live .challenge-card{
+  top:max(70px,calc(env(safe-area-inset-top) + 64px))!important;
+  left:12px!important;
+  right:auto!important;
+  width:min(420px,calc(100vw - 24px))!important;
+  padding:11px 13px 10px!important;
+  border-radius:16px!important;
+  background:rgba(255,255,255,.9)!important;
+  border:1px solid rgba(28,57,66,.12)!important;
+  color:#18313a!important;
+  box-shadow:0 10px 28px rgba(32,50,60,.13)!important;
+  backdrop-filter:blur(14px);
+}
+body.game-live .challenge-meta{color:#617681!important}
+body.game-live .challenge-card strong{
+  color:#18313a!important;
+  font-size:clamp(22px,4vw,34px)!important;
+  margin-top:5px!important;
+}
+body.game-live .difficulty-badge{
+  color:#24444e!important;
+  background:rgba(32,78,88,.06)!important;
+  border-color:rgba(32,78,88,.1)!important;
+}
+body.game-live .timer-track{margin-top:9px!important;background:rgba(31,63,73,.1)!important}
+body.game-live .timer-text{color:#667983!important}
+body.game-live .map-bottom{display:none!important}
+body.game-live .map-tools{
+  top:auto!important;
+  left:auto!important;
+  right:12px!important;
+  bottom:112px!important;
+  z-index:2300!important;
+}
+body.game-live .map-mode{
+  background:rgba(255,255,255,.92)!important;
+  color:#17313a!important;
+  border-color:rgba(28,57,66,.12)!important;
+  box-shadow:0 8px 22px rgba(32,50,60,.12)!important;
+}
+
+/* Always-visible answer dock. */
+body.game-live .control-card{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:max(8px,env(safe-area-inset-bottom))!important;
+  transform:translateX(-50%);
+  z-index:2600!important;
+  width:min(820px,calc(100vw - 16px))!important;
+  min-height:0!important;
+  padding:9px 10px 8px!important;
+  border-radius:20px!important;
+  border:1px solid rgba(28,57,66,.14)!important;
+  background:rgba(255,255,255,.92)!important;
+  box-shadow:0 14px 40px rgba(28,48,58,.18)!important;
+  color:#18282f!important;
+  backdrop-filter:blur(18px);
+  overflow:visible!important;
+}
+body.game-live .control-card h2,
+body.game-live .control-card .prompt,
+body.game-live .control-card .rules{display:none!important}
+body.game-live .turn-kicker{
+  margin:0 0 6px!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  color:#1e5e62!important;
+  min-height:16px;
+}
+body.game-live .turn-kicker b{color:#1e5e62!important}
+body.game-live #answerForm{position:relative}
+body.game-live .answer-label{display:none!important}
+body.game-live .answer-box{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:8px!important;
+}
+body.game-live #streetInput{
+  height:52px!important;
+  background:#f7fafb!important;
+  color:#14272f!important;
+  border:1px solid rgba(34,66,76,.16)!important;
+  box-shadow:none!important;
+}
+body.game-live #streetInput::placeholder{color:#81939b!important}
+body.game-live #streetInput:focus{
+  border-color:rgba(40,180,164,.58)!important;
+  box-shadow:0 0 0 3px rgba(40,180,164,.1)!important;
+}
+body.game-live #submitBtn{
+  width:auto!important;
+  min-width:92px;
+  height:52px!important;
+  margin:0!important;
+  border-radius:14px!important;
+}
+body.game-live .suggestions{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:calc(100% + 8px);
+  z-index:2700;
+  max-height:min(46dvh,320px);
+  overflow-y:auto;
+  margin:0!important;
+  padding:7px;
+  border-radius:15px;
+  background:rgba(255,255,255,.97);
+  border:1px solid rgba(28,57,66,.12);
+  box-shadow:0 12px 32px rgba(25,45,54,.16);
+}
+body.game-live .suggestions:empty{display:none}
+body.game-live .suggestions button{
+  background:#f6f9fa!important;
+  color:#1b3038!important;
+  border-color:rgba(28,57,66,.1)!important;
+}
+body.game-live .message{
+  min-height:0!important;
+  margin:6px 2px 0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:#667983!important;
+  font-size:10px!important;
+  line-height:1.35!important;
+}
+body.game-live .message.good{color:#187354!important}
+body.game-live .message.bad{color:#a9423a!important}
+body.game-live .path-hint{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:calc(100% + 8px);
+  margin:0!important;
+  background:rgba(255,255,255,.97)!important;
+  color:#27545b!important;
+  border-color:rgba(40,180,164,.18)!important;
+  box-shadow:0 12px 30px rgba(25,45,54,.14);
+}
+
+@media(max-width:720px){
+  body.game-live .match-strip{
+    top:max(6px,env(safe-area-inset-top));
+    width:calc(100vw - 12px);
+    grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr)!important;
+    gap:5px;
+  }
+  body.game-live .player-card,
+  body.game-live .match-center{min-height:42px!important;border-radius:13px!important}
+  body.game-live .player-card{padding:6px 8px!important;gap:6px!important}
+  body.game-live .player-dot{width:7px!important;height:7px!important}
+  body.game-live .player-copy small{font-size:7px!important}
+  body.game-live .player-copy strong{font-size:12px!important}
+  body.game-live .player-card b{font-size:20px!important}
+  body.game-live .match-center small{display:none!important}
+  body.game-live .match-center strong{font-size:11px!important}
+  body.game-live .match-center span{font-size:8px!important}
+  body.game-live .challenge-card{
+    top:max(56px,calc(env(safe-area-inset-top) + 50px))!important;
+    width:auto!important;
+    max-width:calc(100vw - 24px)!important;
+    padding:9px 11px!important;
+  }
+  body.game-live .challenge-card strong{font-size:22px!important}
+  body.game-live .difficulty-badge{font-size:8px!important;padding:4px 6px!important}
+  body.game-live .timer-text{font-size:9px!important}
+  body.game-live .control-card{
+    width:calc(100vw - 10px)!important;
+    bottom:max(5px,env(safe-area-inset-bottom))!important;
+    padding:8px!important;
+    border-radius:17px!important;
+  }
+  body.game-live .turn-kicker{margin-bottom:4px!important}
+  body.game-live #streetInput{height:48px!important;font-size:16px!important}
+  body.game-live #submitBtn{height:48px!important;min-width:78px!important;padding:0 13px!important}
+  body.game-live .map-tools{bottom:96px!important;right:8px!important}
+  body.game-live .leaflet-control-zoom{margin-bottom:102px!important}
+}

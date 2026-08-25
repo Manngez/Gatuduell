@@ -5,10 +5,10 @@ import fs from 'node:fs';
 const loader=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const compat=fs.readFileSync(new URL('../maplibre-leaflet-compat.js',import.meta.url),'utf8');
 
-test('MapLibre laddas före spelmodulerna',()=>{
+test('MapLibre och kompatibilitetslagret laddas innan spelmodulerna startas',()=>{
   assert.match(loader,/maplibre-gl@6\.0\.0\/dist\/maplibre-gl\.js/);
   assert.match(loader,/maplibre-leaflet-compat\.js/);
-  assert.ok(loader.indexOf('maplibre-leaflet-compat.js') < loader.indexOf("app-state.js"));
+  assert.match(loader,/maplibre-gl\.js'\s*,\s*\(\)=>\{[\s\S]*maplibre-leaflet-compat\.js[\s\S]*loadApp\(0\)/);
 });
 
 test('MapLibre använder ljus OpenFreeMap-stil och döljer labels',()=>{

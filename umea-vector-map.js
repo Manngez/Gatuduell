@@ -5,58 +5,9 @@
   if(!L||!E) throw new Error('Kartmotorn kunde inte starta.');
 
   const CENTRAL={minLat:63.78,maxLat:63.87,minLon:20.13,maxLon:20.37};
-  const originalMap=L.map.bind(L);
-  const originalTileLayer=L.tileLayer.bind(L);
   const originalPolyline=L.polyline.bind(L);
   const originalFlyToBounds=L.Map.prototype.flyToBounds;
   let manualFocusUntil=0;
-
-  // Behåll Leaflets vanliga mobilbeteende. Framför allt ska pinch-zoom följa
-  // fingrarna och inte behöva rita om hela Umeås gatunät under gesten.
-  L.map=function createStableMap(id,options={}){
-    const map=originalMap(id,{
-      ...options,
-      inertia:false,
-      touchZoom:'center',
-      zoomSnap:0,
-      zoomDelta:.25,
-      zoomAnimation:true,
-      fadeAnimation:true,
-      markerZoomAnimation:true,
-      bounceAtZoomLimits:false
-    });
-
-    if(!map.getPane('streetRoutePane')){
-      const routePane=map.createPane('streetRoutePane');
-      routePane.style.zIndex='650';
-      routePane.style.pointerEvents='none';
-    }
-
-    map.whenReady(()=>{
-      map.dragging.enable();
-      map.touchZoom.enable();
-      map.doubleClickZoom.enable();
-      const container=map.getContainer();
-      container.style.touchAction='none';
-      container.style.overscrollBehavior='none';
-      container.style.background='#f5f7f8';
-      L.control.attribution({position:'bottomright',prefix:false})
-        .addAttribution('Gator: Umeå Open Data / NVDB')
-        .addTo(map);
-    });
-    return map;
-  };
-
-  // Använd en vanlig rasterbaskarta. Den tidigare versionen byggde hela Umeås
-  // gatunät som ett enda tungt canvaslager, vilket gjorde pinch-zoom ryckig.
-  L.tileLayer=function createFastBaseMap(url,options={}){
-    return originalTileLayer(url,{
-      ...options,
-      updateWhenZooming:false,
-      updateWhenIdle:true,
-      keepBuffer:4
-    });
-  };
 
   // Spelade gator ligger i ett separat lager ovanför baskartan.
   L.polyline=function createGamePolyline(latlngs,options={}){

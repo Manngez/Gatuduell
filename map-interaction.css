@@ -8,7 +8,9 @@ body.game-live #map{
   min-height:100svh!important;
 }
 body.game-live #map,
-body.game-live .leaflet-container{
+body.game-live .leaflet-container,
+body.game-live .maplibregl-map,
+body.game-live .maplibregl-canvas{
   touch-action:none!important;
   overscroll-behavior:none!important;
   cursor:grab;
@@ -16,13 +18,27 @@ body.game-live .leaflet-container{
   -webkit-user-select:none!important;
 }
 body.game-live #map:active,
-body.game-live .leaflet-container:active{cursor:grabbing}
+body.game-live .leaflet-container:active,
+body.game-live .maplibregl-map:active{cursor:grabbing}
 body.game-live .map-tools{display:none!important}
 body.game-live .challenge-card{pointer-events:none}
 body.game-live .leaflet-control-zoom,
+body.game-live .maplibregl-ctrl-group,
 body.game-live .control-card{pointer-events:auto}
+body.game-live .maplibregl-ctrl-bottom-right{bottom:106px!important;right:8px!important}
+body.game-live .maplibregl-ctrl-group{
+  border:1px solid rgba(28,57,66,.14)!important;
+  border-radius:12px!important;
+  overflow:hidden;
+  box-shadow:0 8px 22px rgba(32,50,60,.12)!important;
+}
+body.game-live .maplibregl-ctrl-group button{background-color:rgba(255,255,255,.94)!important}
+body.game-live .maplibregl-ctrl-attrib{font-size:9px!important;background:rgba(255,255,255,.76)!important}
 body.game-live .leaflet-tile-pane{will-change:transform}
 @media(max-width:760px){
   body.game-live #map,
-  body.game-live .map-card{touch-action:none!important}
+  body.game-live .map-card,
+  body.game-live .maplibregl-map,
+  body.game-live .maplibregl-canvas{touch-action:none!important}
+  body.game-live .maplibregl-ctrl-bottom-right{bottom:96px!important}
 }

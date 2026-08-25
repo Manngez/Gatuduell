@@ -1,7 +1,7 @@
 'use strict';
 
 (() => {
-  const VERSION='20260825-map3';
+  const VERSION='20260825-map4';
   for(const href of ['commercial.css','fullscreen-game.css','map-interaction.css']){
     const css=document.createElement('link');
     css.rel='stylesheet';

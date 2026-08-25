@@ -5,29 +5,24 @@
   if(!L||!E) throw new Error('Kartmotorn kunde inte starta.');
 
   const CENTRAL={minLat:63.78,maxLat:63.87,minLon:20.13,maxLon:20.37};
-  const originalBuildGraph=E.buildGraph.bind(E);
   const originalMap=L.map.bind(L);
+  const originalTileLayer=L.tileLayer.bind(L);
   const originalPolyline=L.polyline.bind(L);
   const originalFlyToBounds=L.Map.prototype.flyToBounds;
-  let graph=null;
   let manualFocusUntil=0;
 
-  E.buildGraph=function buildGraphAndKeep(features,options){
-    graph=originalBuildGraph(features,options);
-    return graph;
-  };
-
-  L.map=function createStableVectorMap(id,options={}){
+  // Behåll Leaflets vanliga mobilbeteende. Framför allt ska pinch-zoom följa
+  // fingrarna och inte behöva rita om hela Umeås gatunät under gesten.
+  L.map=function createStableMap(id,options={}){
     const map=originalMap(id,{
       ...options,
-      preferCanvas:true,
-      inertia:false,
+      inertia:true,
       touchZoom:true,
       zoomSnap:0,
       zoomDelta:.25,
       zoomAnimation:true,
-      fadeAnimation:false,
-      markerZoomAnimation:false,
+      fadeAnimation:true,
+      markerZoomAnimation:true,
       bounceAtZoomLimits:false
     });
 
@@ -52,8 +47,18 @@
     return map;
   };
 
-  // Alla spelade gator läggs i ett eget översta lager så att de alltid syns.
-  // Tidigare val blir röda; den aktuella gatan får en vit kant och starkare röd kärna.
+  // Använd en vanlig rasterbaskarta. Den tidigare versionen byggde hela Umeås
+  // gatunät som ett enda tungt canvaslager, vilket gjorde pinch-zoom ryckig.
+  L.tileLayer=function createFastBaseMap(url,options={}){
+    return originalTileLayer(url,{
+      ...options,
+      updateWhenZooming:false,
+      updateWhenIdle:true,
+      keepBuffer:4
+    });
+  };
+
+  // Spelade gator ligger i ett separat lager ovanför baskartan.
   L.polyline=function createGamePolyline(latlngs,options={}){
     const color=String(options?.color||'').toLowerCase();
     const isPrevious=color==='#7b8791';
@@ -66,31 +71,6 @@
     if(isCurrentOutline) Object.assign(styled,{color:'#ffffff',weight:13,opacity:.98});
     if(isCurrent) Object.assign(styled,{color:'#d91f1f',weight:8,opacity:1});
     return originalPolyline(latlngs,styled);
-  };
-
-  // Appen anropar L.tileLayer, men vi returnerar i stället ett enda vektorlager
-  // byggt av samma Umeå-data som spelmotorn. Ingen extern baskarta laddas.
-  L.tileLayer=function createUmeaStreetLayer(){
-    if(!graph?.names?.length) return L.layerGroup();
-    const lines=[];
-    for(const name of graph.names){
-      const street=graph.get(name);
-      for(const coords of street?.lines||[]){
-        if(coords.length<2) continue;
-        lines.push(coords.map(([lon,lat])=>[lat,lon]));
-      }
-    }
-    const renderer=L.canvas({padding:.65,tolerance:4});
-    return L.polyline(lines,{
-      renderer,
-      interactive:false,
-      color:'#b8c1c7',
-      weight:2,
-      opacity:.8,
-      smoothFactor:1.2,
-      lineCap:'round',
-      lineJoin:'round'
-    });
   };
 
   // Spelet får inte flytta kartan automatiskt mellan turerna.

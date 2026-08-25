@@ -58,8 +58,9 @@
       inertia:true,preferCanvas:true,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:false,
       boxZoom:false,keyboard:false,worldCopyJump:false
     }).setView(CENTER,13);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{
-      subdomains:'abcd',maxZoom:20,attribution:'&copy; OpenStreetMap &copy; CARTO'
+    L.tileLayer('https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
+      tileSize:256,detectRetina:false,maxZoom:20,updateWhenZooming:false,updateWhenIdle:true,keepBuffer:4,
+      attribution:'&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
     routeLayer=L.layerGroup().addTo(map);
     map.on('dragstart zoomstart',markUserNavigation);

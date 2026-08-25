@@ -55,7 +55,7 @@
     if(map){setTimeout(()=>map.invalidateSize(false),80);return;}
     map=L.map('map',{
       zoomControl:false,minZoom:10,maxZoom:18,zoomSnap:.25,zoomDelta:.5,wheelPxPerZoomLevel:80,
-      inertia:true,preferCanvas:false,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:false,
+      inertia:true,preferCanvas:true,dragging:true,touchZoom:true,doubleClickZoom:true,scrollWheelZoom:false,
       boxZoom:false,keyboard:false,worldCopyJump:false
     }).setView(CENTER,13);
     L.tileLayer('https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{

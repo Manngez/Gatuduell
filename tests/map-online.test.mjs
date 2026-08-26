@@ -4,6 +4,7 @@ import fs from 'node:fs';
 
 const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+const onlineCss=fs.readFileSync(new URL('../online-v2.css',import.meta.url),'utf8');
 
 test('kartan använder Orten 2.0-principer och Umeå-vy',()=>{
   assert.match(app,/zoomSnap:\.25/);
@@ -18,6 +19,12 @@ test('kartan använder Orten 2.0-principer och Umeå-vy',()=>{
 test('aktuell gata rödmarkeras',()=>{
   assert.match(app,/color:'#e53935'/);
   assert.match(html,/AKTUELL GATA · RÖDMARKERAD/);
+});
+
+test('värdkontrollerna ligger under kortet för aktuell gata',()=>{
+  assert.match(onlineCss,/\.host-panel\{[^}]*top:176px/);
+  assert.match(onlineCss,/@media\(max-width:600px\)\{[\s\S]*?\.host-panel\{top:164px/);
+  assert.doesNotMatch(onlineCss,/\.host-panel\{[^}]*top:86px/);
 });
 
 test('mobilkartan använder en enda stabil tilevärd',()=>{

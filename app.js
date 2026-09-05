@@ -18,7 +18,7 @@
 
   let graph=null,map=null,routeLayer=null,timer=null,displayTimer=null,state=null,resultMode='next';
   let userNavigatingUntil=0,mapProgrammatic=false;
-  const net={role:'offline',peer:null,conn:null,connections:new Map(),room:'',name:'',status:'offline',peerPromise:null,pendingMove:false,playerId:'',hostPlayerId:'',hostMode:'master',heartbeat:null,reconnect:null,lastPong:0,generation:0,moveTimeout:null,pendingPacket:null,seenMoves:new Set(),pending:new Map()};
+  const net={role:'offline',peer:null,conn:null,connections:new Map(),room:'',name:'',status:'offline',peerPromise:null,pendingMove:false,playerId:'',hostPlayerId:'',hostMode:'master',heartbeat:null,reconnect:null,lastPong:0,generation:0,moveTimeout:null,connectTimeout:null,pendingPacket:null,seenMoves:new Set(),pending:new Map()};
 
   function safeRoom(value=''){return String(value).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6)}
   function makeRoom(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:5},()=>chars[Math.floor(Math.random()*chars.length)]).join('')}
@@ -242,8 +242,18 @@
   function setMessage(text,type=''){const el=$('message');el.textContent=text;el.className=`message${type?` ${type}`:''}`}
 
   async function ensurePeer(){if(globalThis.Peer)return globalThis.Peer;if(net.peerPromise)return net.peerPromise;net.peerPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=PEERJS_URL;s.async=true;s.onload=()=>globalThis.Peer?resolve(globalThis.Peer):reject(new Error('PeerJS kunde inte starta'));s.onerror=()=>reject(new Error('PeerJS kunde inte laddas'));document.head.appendChild(s)}).catch(e=>{net.peerPromise=null;throw e});return net.peerPromise;}
+  function armConnectionTimeout(){
+    clearTimeout(net.connectTimeout);const generation=net.generation;
+    net.connectTimeout=setTimeout(()=>{
+      if(net.generation!==generation||['ready','waiting'].includes(net.status))return;
+      if(state&&state.gameStatus!=='LOBBY'&&net.conn){net.conn.close();return;}
+      leaveNetwork(false);net.status='error';
+      $('onlineError').textContent='Anslutningen tog för lång tid. Kontrollera rumskoden och prova igen, eller byt nätverk.';
+      renderOnlineStatus();
+    },15000);
+  }
   function closePeer(){
-    net.generation++;net.role='offline';clearInterval(net.heartbeat);clearTimeout(net.reconnect);clearTimeout(net.moveTimeout);
+    net.generation++;net.role='offline';clearInterval(net.heartbeat);clearTimeout(net.reconnect);clearTimeout(net.moveTimeout);clearTimeout(net.connectTimeout);
     net.pendingPacket=null;net.pendingMove=false;net.pending.clear();net.seenMoves.clear();
     try{net.conn?.close()}catch{}for(const c of net.connections.values())try{c.close()}catch{}
     try{net.peer?.destroy()}catch{}net.connections.clear();net.conn=null;net.peer=null;
@@ -282,7 +292,8 @@
   async function createRoom(){
     if(!graph)return;const name=$('onlineName').value.trim()||'Spelledare';const code=safeRoom($('roomCodeCreate').value||makeRoom());
     closePeer();net.role='host';net.name=name;net.room=code;net.hostMode=document.querySelector('input[name="hostRole"]:checked').value;net.playerId=crypto.randomUUID();net.hostPlayerId=net.playerId;net.status='connecting';const host=makePlayer(net.playerId,name,{active:net.hostMode==='player',isGameMaster:true});state=makeState([host],{difficulty:$('onlineDifficulty').value,timeLimit:$('onlineSeconds').value});state.hostId=state.gameMasterId=net.playerId;renderOnlineStatus();
-    try{const PeerCtor=await ensurePeer();const peer=new PeerCtor(roomPeerId(code),peerOptions());net.peer=peer;peer.on('open',()=>{net.status='waiting';startHeartbeat();renderOnlineStatus()});peer.on('connection',attachHostConnection);peer.on('error',err=>{net.status='error';$('onlineError').textContent=networkError(err?.type);renderOnlineStatus()});}catch(err){net.status='error';$('onlineError').textContent=err.message;renderOnlineStatus()}
+    const generation=net.generation;armConnectionTimeout();
+    try{const PeerCtor=await ensurePeer();if(generation!==net.generation)return;const peer=new PeerCtor(roomPeerId(code),peerOptions());net.peer=peer;peer.on('open',()=>{clearTimeout(net.connectTimeout);net.status='waiting';startHeartbeat();renderOnlineStatus()});peer.on('connection',attachHostConnection);peer.on('error',err=>{net.status='error';$('onlineError').textContent=networkError(err?.type);renderOnlineStatus()});}catch(err){net.status='error';$('onlineError').textContent=err.message;renderOnlineStatus()}
   }
   function attachHostConnection(conn){
     let id='';
@@ -321,14 +332,15 @@
   async function joinRoom(){
     if(!graph)return;const name=$('onlineName').value.trim()||'Spelare';const code=safeRoom($('roomCodeJoin').value);if(!code){$('onlineError').textContent='Skriv rumskoden.';return}
     closePeer();net.role='guest';net.name=name;net.room=code;net.playerId=crypto.randomUUID();try{net.playerId=sessionStorage.getItem(`gatuduell:player:${code}`)||net.playerId;sessionStorage.setItem(`gatuduell:player:${code}`,net.playerId)}catch{}state=null;net.status='connecting';renderOnlineStatus();
-    try{const PeerCtor=await ensurePeer();const peer=new PeerCtor(undefined,peerOptions());net.peer=peer;peer.on('open',connectToHost);peer.on('error',err=>{net.status='error';$('onlineError').textContent=networkError(err?.type);renderOnlineStatus()});}catch(err){net.status='error';$('onlineError').textContent=err.message;renderOnlineStatus()}
+    const generation=net.generation;armConnectionTimeout();
+    try{const PeerCtor=await ensurePeer();if(generation!==net.generation)return;const peer=new PeerCtor(undefined,peerOptions());net.peer=peer;peer.on('open',connectToHost);peer.on('error',err=>{net.status='error';$('onlineError').textContent=networkError(err?.type);renderOnlineStatus()});}catch(err){net.status='error';$('onlineError').textContent=err.message;renderOnlineStatus()}
   }
   function connectToHost(){
     if(net.role!=='guest'||!net.peer)return;
     if(net.peer.destroyed){void joinRoom();return;}
     if(net.peer.disconnected)net.peer.reconnect();
     net.status=state?'reconnecting':'connecting';renderOnlineStatus();
-    const conn=net.peer.connect(roomPeerId(net.room),{reliable:true});net.conn=conn;attachGuestConnection(conn);
+    const conn=net.peer.connect(roomPeerId(net.room),{reliable:true});net.conn=conn;attachGuestConnection(conn);armConnectionTimeout();
   }
 
   function migrationCandidate(){if(!state)return null;const eligible=state.players.filter(p=>p.id!==state.hostId&&p.approved&&p.active&&p.connected);return eligible.find(p=>p.isGameMaster)||eligible.sort((a,b)=>a.joinedAt-b.joinedAt)[0]||null}
@@ -366,7 +378,7 @@
     conn.on('data',msg=>{
       if(net.conn!==conn||net.role!=='guest')return;
       net.lastPong=Date.now();
-      if(msg?.type==='welcome'){net.playerId=msg.playerId;net.status='ready';state=null;applyRemoteState(msg.state);startHeartbeat();}
+      if(msg?.type==='welcome'){clearTimeout(net.connectTimeout);net.playerId=msg.playerId;net.status='ready';state=null;applyRemoteState(msg.state);startHeartbeat();}
       if(msg?.type==='state')applyRemoteState(msg.state);
       if(msg?.type==='ping')conn.send({type:'pong',at:Date.now()});
       if(msg?.type==='move-result'){
@@ -382,7 +394,7 @@
       if(net.role!=='guest'||net.conn!==conn)return;
       net.status='reconnecting';clearPendingMove();setTurnInput();renderOnlineStatus();
       if(state?.gameStatus==='PLAYING')setMessage('Återansluter…','bad');
-      clearInterval(net.heartbeat);clearTimeout(net.reconnect);void scheduleHostMigration();
+      clearInterval(net.heartbeat);clearTimeout(net.reconnect);clearTimeout(net.connectTimeout);void scheduleHostMigration();
     });
     conn.on('error',()=>conn.close());
   }

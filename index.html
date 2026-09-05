@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f5f7f8">
+  <meta name="theme-color" content="#0b171a">
   <title>Gatduell Umeå</title>
   <meta name="description" content="Gatduell Umeå – lokalt eller online med riktiga gatukorsningar i Umeå.">
   <link rel="preconnect" href="https://unpkg.com">
@@ -13,27 +13,24 @@
   <link rel="stylesheet" href="online.css?v=20260825-online1">
   <link rel="stylesheet" href="online-v2.css?v=20260905-fixes1">
   <link rel="stylesheet" href="vector-map.css?v=20260905-fixes1">
-  <link rel="stylesheet" href="fixes.css?v=20260905-fixes2">
+  <link rel="stylesheet" href="fixes.css?v=20260905-design1">
 </head>
 <body>
   <main id="setupScreen" class="setup-screen">
     <section class="setup-card">
-      <div class="brand-mark">G</div>
-      <p class="eyebrow">GATDUELL · UMEÅ</p>
-      <h1>Vem kan Umeås gator bäst?</h1>
-      <p class="lead">Turas om att hitta en ny gata som ansluter till den aktuella gatan. Spela på samma enhet eller skapa ett onlinerum.</p>
-
-      <details class="rules" open>
-        <summary>Så spelar ni · först till 3 poäng</summary>
-        <ol>
-          <li>Den röda gatan är utgångspunkten. Skriv ett gatunamn och tryck Svara.</li>
-          <li>Svår: gatorna ska ansluta direkt. Medel: högst två anslutningar. Lätt: högst tre. A → B → C är två steg.</li>
-          <li>En gata som redan valts får inte väljas igen under rundan. Grå streckade gator är använda. I Medel och Lätt får vägen gå via en använd gata.</li>
-          <li>Fel svar, slut på tid eller inga möjliga gator avslutar rundan. Nästa anslutna spelare i turordningen får 1 poäng, även om ni är fler än två.</li>
-          <li>Först till 3 poäng vinner matchen. Kartan visar startgatan; därefter flyttar du den själv. Tryck ◎ för att hitta aktuell gata.</li>
-        </ol>
-        <p>Online: värden godkänner spelarna och startar. Frånkopplade spelare hoppas över. Med färre än två anslutna spelare pausas matchen.</p>
-      </details>
+      <header class="setup-top">
+        <div class="wordmark" aria-label="Gatduell">GAT<span>DUELL</span><i aria-hidden="true">↗</i></div>
+        <span class="city-tag">UMEÅ <span>63°49′ N</span></span>
+      </header>
+      <div class="setup-intro">
+        <p class="eyebrow">HEMMAPLAN ÄR EN FÖRDEL</p>
+        <h1>Känner du<br><em>Umeås gator?</em></h1>
+        <p class="lead">En gata leder till nästa. Utmana en kompis och se vem som hittar längst.</p>
+        <div class="map-preview" aria-hidden="true"><span class="map-caption">UMEÅ · GATUNÄT</span><span class="map-crosshair">+</span></div>
+        <div class="game-facts"><span><b>02–10</b> spelare</span><span><b>03</b> poäng för vinst</span></div>
+      </div>
+      <div class="setup-controls">
+        <div class="section-heading"><span class="section-index">01</span><div><p>REDO FÖR EN DUELL?</p><h2>Gör er startklara.</h2></div></div>
       <div class="setup-grid">
         <label>Spelare 1<input id="name1" maxlength="24" value="Spelare 1"></label>
         <label>Spelare 2<input id="name2" maxlength="24" value="Spelare 2"></label>
@@ -63,6 +60,21 @@
       </div>
       <p id="loadStatus" class="load-status">Hämtar gatunät från Umeå Open Data / NVDB…</p>
       <button id="retryLoadBtn" class="online-button" type="button" hidden>Försök igen</button>
+        <p class="mode-note">Samma skärm? Spela lokalt. Egna mobiler? Spela online.</p>
+      </div>
+      <div class="setup-help">
+      <details class="rules">
+        <summary>Så spelar ni · först till 3 poäng</summary>
+        <ol>
+          <li>Den röda gatan är utgångspunkten. Skriv ett gatunamn och tryck Svara.</li>
+          <li>Svår: gatorna ska ansluta direkt. Medel: högst två anslutningar. Lätt: högst tre. A → B → C är två steg.</li>
+          <li>En gata som redan valts får inte väljas igen under rundan. Grå streckade gator är använda. I Medel och Lätt får vägen gå via en använd gata.</li>
+          <li>Fel svar, slut på tid eller inga möjliga gator avslutar rundan. Nästa anslutna spelare i turordningen får 1 poäng, även om ni är fler än två.</li>
+          <li>Först till 3 poäng vinner matchen. Kartan visar startgatan; därefter flyttar du den själv. Tryck ◎ för att hitta aktuell gata.</li>
+        </ol>
+        <p>Online: värden godkänner spelarna och startar. Frånkopplade spelare hoppas över. Med färre än två anslutna spelare pausas matchen.</p>
+      </details>
+      </div>
     </section>
   </main>
 
@@ -74,7 +86,7 @@
       <div class="round"><small>RUNDA</small><strong id="roundNo">1</strong></div>
     </section>
 
-    <section class="street-hud">
+    <section class="street-hud" aria-label="Aktuell gata">
       <small>AKTUELL GATA · RÖDMARKERAD</small>
       <strong id="currentStreet">—</strong>
       <div class="street-meta"><span id="difficultyBadge"></span><span id="timerText"></span></div>
@@ -86,7 +98,7 @@
     <button id="newMatchBtn" class="new-match" type="button">Ny match</button>
 
     <aside id="hostPanel" class="host-panel" hidden>
-      <button id="hostPanelToggle" type="button">VÄRDKONTROLLER</button>
+      <button id="hostPanelToggle" type="button">Spelledarens verktyg</button>
       <div id="hostPanelBody" hidden>
         <button data-host-action="pause">Pausa</button><button data-host-action="resume">Återuppta</button>
         <button data-host-action="skip">Hoppa över</button><button data-host-action="end-round">Avsluta runda</button>
@@ -153,7 +165,7 @@
       </div>
       <button id="onlineStartGame" class="start-button" type="button" hidden disabled>Starta match</button>
       <button id="leaveOnlineBtn" class="online-leave" type="button" hidden>Lämna rummet</button>
-      <p class="online-note">Värden validerar spelet och synkroniserar samma matchläge till alla enheter.</p>
+      <p class="online-note">Alla spelar på samma karta. Värden godkänner spelarna och startar matchen.</p>
     </section>
   </div>
 

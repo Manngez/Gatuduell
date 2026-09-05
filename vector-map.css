@@ -4,4 +4,4 @@
 #map .leaflet-streetRoute-pane{pointer-events:none!important}
 #map .leaflet-control-attribution{background:rgba(255,255,255,.78)!important;color:#65737c!important;border-radius:8px 0 0 0;padding:3px 6px!important;font-size:8px!important}
 #map .leaflet-control-attribution a{color:#65737c!important}
-.map-hint{display:none!important}
+.map-hint{display:block!important}

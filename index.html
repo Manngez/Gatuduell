@@ -8,11 +8,12 @@
   <meta name="description" content="Gatduell Umeå – lokalt eller online med riktiga gatukorsningar i Umeå.">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="leaflet.css?v=1.9.4-local">
-  <link rel="stylesheet" href="styles.css?v=20260825-clean2">
+  <link rel="stylesheet" href="styles.css?v=20260905-fixes1">
   <link rel="stylesheet" href="result-ui.css?v=20260825-result1">
   <link rel="stylesheet" href="online.css?v=20260825-online1">
-  <link rel="stylesheet" href="online-v2.css?v=20260826-host1">
-  <link rel="stylesheet" href="vector-map.css?v=20260825-tiles4">
+  <link rel="stylesheet" href="online-v2.css?v=20260905-fixes1">
+  <link rel="stylesheet" href="vector-map.css?v=20260905-fixes1">
+  <link rel="stylesheet" href="fixes.css?v=20260905-fixes1">
 </head>
 <body>
   <main id="setupScreen" class="setup-screen">
@@ -20,16 +21,27 @@
       <div class="brand-mark">G</div>
       <p class="eyebrow">GATDUELL · UMEÅ</p>
       <h1>Vem kan Umeås gator bäst?</h1>
-      <p class="lead">Turas om att skriva gator som ligger rätt från den aktuella gatan. Spela på samma enhet eller skapa ett onlinerum.</p>
+      <p class="lead">Turas om att hitta en ny gata som ansluter till den aktuella gatan. Spela på samma enhet eller skapa ett onlinerum.</p>
 
+      <details class="rules" open>
+        <summary>Så spelar ni · först till 3 poäng</summary>
+        <ol>
+          <li>Den röda gatan är utgångspunkten. Skriv ett gatunamn och tryck Svara.</li>
+          <li>Svår: gatorna ska ansluta direkt. Medel: högst två anslutningar. Lätt: högst tre. A → B → C är två steg.</li>
+          <li>En gata som redan valts får inte väljas igen under rundan. Grå streckade gator är använda. I Medel och Lätt får vägen gå via en använd gata.</li>
+          <li>Fel svar, slut på tid eller inga möjliga gator avslutar rundan. Nästa anslutna spelare i turordningen får 1 poäng, även om ni är fler än två.</li>
+          <li>Först till 3 poäng vinner matchen. Kartan visar startgatan; därefter flyttar du den själv. Tryck ◎ för att hitta aktuell gata.</li>
+        </ol>
+        <p>Online: värden godkänner spelarna och startar. Frånkopplade spelare hoppas över. Med färre än två anslutna spelare pausas matchen.</p>
+      </details>
       <div class="setup-grid">
         <label>Spelare 1<input id="name1" maxlength="24" value="Spelare 1"></label>
         <label>Spelare 2<input id="name2" maxlength="24" value="Spelare 2"></label>
         <label>Svårighetsgrad
           <select id="difficulty">
-            <option value="hard">🔴 Hard · direkt anslutning</option>
-            <option value="medium">🟡 Medium · max 2 steg</option>
-            <option value="easy">🟢 Easy · max 3 steg</option>
+            <option value="hard">🔴 Svår · direkt anslutning</option>
+            <option value="medium">🟡 Medel · max 2 steg</option>
+            <option value="easy">🟢 Lätt · max 3 steg</option>
           </select>
         </label>
         <label>Tid per tur
@@ -50,6 +62,7 @@
         <button id="onlineBtn" class="online-button" disabled>Spela online</button>
       </div>
       <p id="loadStatus" class="load-status">Hämtar gatunät från Umeå Open Data / NVDB…</p>
+      <button id="retryLoadBtn" class="online-button" type="button" hidden>Försök igen</button>
     </section>
   </main>
 
@@ -68,7 +81,7 @@
       <div id="timerTrack" class="timer-track"><i id="timerBar"></i></div>
     </section>
 
-    <div id="mapHint" class="map-hint">Dra eller nyp fritt</div>
+    <div id="mapHint" class="map-hint">Röd: aktuell gata · Grå: redan använd</div>
     <button id="recenterBtn" class="map-button" type="button" aria-label="Visa aktuell gata">◎</button>
     <button id="newMatchBtn" class="new-match" type="button">Ny match</button>
 
@@ -83,7 +96,7 @@
     </aside>
 
     <section class="composer">
-      <div id="message" class="message">Skriv en gata som ligger rätt från den röda gatan.</div>
+      <div id="message" class="message" role="status" aria-live="polite">Skriv en gata som ligger rätt från den röda gatan.</div>
       <div id="pathHint" class="path-hint" hidden></div>
       <div id="suggestions" class="suggestions"></div>
       <form id="answerForm" autocomplete="off">
@@ -135,7 +148,7 @@
         <div id="onlineError" class="online-error"></div>
       </div>
       <div id="lobbySettings" class="lobby-settings" hidden>
-        <label class="online-field">Svårighetsgrad<select id="onlineDifficulty"><option value="hard">Hard · direkt</option><option value="medium">Medium · 2 steg</option><option value="easy">Easy · 3 steg</option></select></label>
+        <label class="online-field">Svårighetsgrad<select id="onlineDifficulty"><option value="hard">Svår · direkt</option><option value="medium">Medel · 2 steg</option><option value="easy">Lätt · 3 steg</option></select></label>
         <label class="online-field">Tid per tur<select id="onlineSeconds"><option value="0">Ingen tidsgräns</option><option value="10">10 sek</option><option value="20" selected>20 sek</option><option value="30">30 sek</option><option value="60">60 sek</option></select></label>
       </div>
       <button id="onlineStartGame" class="start-button" type="button" hidden disabled>Starta match</button>
@@ -146,7 +159,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="engine.js?v=20260825-clean1"></script>
-  <script src="umea-vector-map.js?v=20260825-orten2"></script>
-  <script src="app.js?v=20260901-carto1"></script>
+  <script src="umea-vector-map.js?v=20260905-fixes1"></script>
+  <script src="app.js?v=20260905-fixes1"></script>
 </body>
 </html>

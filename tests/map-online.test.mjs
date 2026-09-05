@@ -38,9 +38,9 @@ test('online använder värdcentrerad PeerJS och auktoritativ flyttvalidering',(
   assert.match(app,/peerjs@1\.5\.5/);
   assert.match(app,/roomPeerId/);
   assert.match(app,/connections:new Map\(\)/);
-  assert.match(app,/msg\?\.type==='move'&&id===state\.currentPlayer/);
-  assert.match(app,/msg\.revision===state\.revision/);
-  assert.match(app,/processMove\(String\(msg\.raw\|\|''\)\)/);
+  assert.match(app,/id!==state\.currentPlayer/);
+  assert.match(app,/msg\.turnId===state\.turnId/);
+  assert.match(app,/processMove\(String\(msg\.raw/);
   assert.match(html,/Skapa rum/);
   assert.match(html,/Anslut/);
 });

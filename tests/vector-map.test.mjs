@@ -29,8 +29,8 @@ test('Leaflets interna zoomgeometri skrivs inte över',()=>{
   assert.doesNotMatch(css,/leaflet-pane>canvas/);
   assert.doesNotMatch(map,/touchZoom:'center'/);
   assert.doesNotMatch(map,/zoomSnap:0/);
-  assert.match(map,/manualFocusUntil/);
-  assert.match(map,/#recenterBtn/);
+  assert.doesNotMatch(map,/L\.Map\.prototype\.flyToBounds=/);
+  assert.match(app,/focusCurrent\(true\)/);
 });
 
 test('startgata väljs med Gatduells riktiga graf-API',()=>{

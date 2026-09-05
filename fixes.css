@@ -1,0 +1,12 @@
+/* Readable rules and controls on phones. */
+.rules{margin:18px 0;padding:14px;border:1px solid var(--line);border-radius:14px;color:#dbe8ef;font-size:14px;line-height:1.55}
+.rules summary{cursor:pointer;font-weight:800;color:#ffd27b}.rules ol{padding-left:22px}.rules li+li{margin-top:8px}
+.lead{font-size:16px}.setup-grid label,.online-field{font-size:14px}.load-status{font-size:13px}
+.message,.path-hint,.street-meta{font-size:14px}.street-hud small{font-size:11px}.street-hud strong{white-space:normal}
+.player span{font-size:14px}.new-match{font-size:14px}.suggestions button{font-size:16px}
+.score-hud{grid-template-columns:minmax(0,1fr) auto;pointer-events:auto}.player-strip{min-width:0}.round{pointer-events:none}
+.street-hud{top:76px}.composer{max-height:45svh}.map-hint{display:block!important;font-size:12px;bottom:calc(180px + env(safe-area-inset-bottom))}
+.map-button,.new-match{bottom:calc(145px + env(safe-area-inset-bottom))}
+@media(max-width:600px){.player span{font-size:12px}.street-hud{top:68px}.street-hud strong{font-size:18px}.map-hint{font-size:11px;max-width:calc(100vw - 24px)}}
+
+.online-field{font-size:14px}.online-intro,.online-note{font-size:14px}.online-card .online-field input{font-size:16px}.player-strip{pointer-events:auto;touch-action:pan-x}.online-card .lobby-players li{flex-wrap:wrap;gap:8px}.host-panel{max-height:calc(100svh - 360px);overflow:auto}

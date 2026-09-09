@@ -17,9 +17,9 @@
     if(!isPrevious&&!isCurrentOutline&&!isCurrent) return originalPolyline(latlngs,options);
 
     const styled={...options,pane:'streetRoutePane'};
-    if(isPrevious) Object.assign(styled,{color:'#7b8791',weight:5,opacity:.65,dashArray:'8 5'});
-    if(isCurrentOutline) Object.assign(styled,{color:'#ffffff',weight:13,opacity:.98});
-    if(isCurrent) Object.assign(styled,{color:'#d91f1f',weight:8,opacity:1});
+    if(isPrevious) Object.assign(styled,{color:'#8fa4a8',weight:5,opacity:.75,dashArray:'6 8',lineCap:'round'});
+    if(isCurrentOutline) Object.assign(styled,{color:'#ffffff',weight:15,opacity:.9});
+    if(isCurrent) Object.assign(styled,{color:'#d91f1f',weight:9,opacity:1,lineCap:'round'});
     return originalPolyline(latlngs,styled);
   };
 

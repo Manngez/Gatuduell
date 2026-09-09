@@ -9,7 +9,8 @@
  */
 (() => {
   const $ = id => document.getElementById(id);
-  const soundToggle = localStorage.getItem('gatuduell:sound') !== '0';
+  let soundToggle = true;
+  try { soundToggle = localStorage.getItem('gatuduell:sound') !== '0'; } catch {}
 
   /* ---------- Sound (Web Audio API, no assets) ---------- */
   let audioCtx = null;
@@ -67,21 +68,15 @@
     btn.className = 'mute-btn';
     btn.setAttribute('aria-label', muted ? 'Slå på ljud' : 'Tysta ljud');
     btn.textContent = muted ? '🔇' : '🔊';
-    Object.assign(btn.style, {
-      position:'fixed', zIndex:'530', left:'12px', top:'max(12px, env(safe-area-inset-top))',
-      width:'40px', height:'40px', borderRadius:'12px', border:'1px solid rgba(255,255,255,.18)',
-      background:'rgba(16,38,43,.85)', color:'#e4efeb', backdropFilter:'blur(12px)',
-      boxShadow:'0 8px 24px rgba(0,0,0,.18)', fontSize:'18px', display:'none', cursor:'pointer'
-    });
     btn.addEventListener('click', () => {
       muted = !muted;
       btn.textContent = muted ? '🔇' : '🔊';
       btn.setAttribute('aria-label', muted ? 'Slå på ljud' : 'Tysta ljud');
-      localStorage.setItem('gatuduell:sound', muted ? '0' : '1');
+      try { localStorage.setItem('gatuduell:sound', muted ? '0' : '1'); } catch {}
       ensureAudio();
       if(!muted) sfx.click();
     });
-    document.body.appendChild(btn);
+    document.querySelector('.street-meta').appendChild(btn);
     window.__updateMuteVis = vis => { btn.style.display = vis ? '' : 'none'; };
   }
 
@@ -150,12 +145,6 @@
     setTimeout(()=>{ layer.style.transition='opacity .6s'; layer.style.opacity='0'; setTimeout(()=>layer.remove(),650); }, 4500);
   }
 
-  /* ---------- Turn dot indicator ---------- */
-  const turnDot = document.createElement('div');
-  turnDot.className='turn-dot';
-  turnDot.style.display='none';
-  document.body.appendChild(turnDot);
-
   /* ---------- Streaks ---------- */
   const streaks = new Map();
   function updateStreaks(){
@@ -192,7 +181,7 @@
   function watchTimer(){
     const track = $('timerTrack'); const bar = $('timerBar'); const hud = document.querySelector('.street-hud');
     if(!track || !bar || !hud) return;
-    if(track.hidden){ track.classList.remove('urgent'); hud.classList.remove('urgent'); return; }
+    if($('gameScreen').hidden || !$('resultModal').hidden || $('message').textContent.startsWith('Pausat') || $('message').textContent.startsWith('Spelet är pausat') || track.hidden){ track.classList.remove('urgent'); hud.classList.remove('urgent'); return; }
     const w = parseFloat(bar.style.width || '100');
     if(!Number.isFinite(w)) return;
     if(w <= 25){
@@ -237,13 +226,6 @@
 
     // show mute + turn dot when in game
     if(window.__updateMuteVis) window.__updateMuteVis(!gameScreen.hidden);
-    turnDot.style.display = !gameScreen.hidden ? '' : 'none';
-    // color turn dot by player index
-    const players = document.querySelectorAll('.player-strip .player');
-    players.forEach((p,i)=>{
-      if(p.classList.contains('active')) turnDot.classList.toggle('p2', i===1);
-    });
-
     // message changes
     if(msg !== lastMessage){
       const prev = lastMessage; lastMessage = msg;
@@ -268,7 +250,7 @@
         // The player who just answered is the previous player (now inactive).
         const answeredBy = prevSkriv ? prevSkriv[1].trim() : currentPlayerName();
         const s = (streaks.get(answeredBy)||0) + 1; streaks.set(answeredBy,s);
-        streaks.forEach((v,k)=>{ if(k!==answeredBy && v) streaks.set(k,0); });
+        // Each player keeps their own consecutive correct answers.
         updateStreaks();
         if(s>=3) toast(`${answeredBy} · ${s} i rad! 🔥`, 'info', 1400);
         sfx.turn();
@@ -318,17 +300,14 @@
     }
   }
 
-  new MutationObserver(detectEvents).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true});
-
-  /* ---------- Keyboard hint for submit ---------- */
-  const form = $('answerForm');
-  if(form){
-    const wrap = document.createElement('span');
-    wrap.className='key-hint';
-    wrap.innerHTML = '<kbd>⏎</kbd>';
-    // position relative to composer input area
-    const composer = document.querySelector('.composer');
-    if(composer) composer.appendChild(wrap);
+  // Observe game-owned values only. Observing our own style/class writes on
+  // document.body recursively starves the browser's rendering and input queue.
+  const eventsObserver = new MutationObserver(detectEvents);
+  for (const id of ['message', 'roundNo', 'currentStreet', 'resultTitle', 'resultText']) {
+    eventsObserver.observe($(id), {childList:true, subtree:true, characterData:true});
+  }
+  for (const id of ['gameScreen', 'resultModal']) {
+    eventsObserver.observe($(id), {attributes:true, attributeFilter:['hidden']});
   }
 
   /* ---------- Auto-focus input when it becomes enabled ---------- */
